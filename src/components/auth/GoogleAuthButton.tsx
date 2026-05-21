@@ -15,22 +15,50 @@ export default function GoogleAuthButton() {
       provider: 'google',
       options: {
         redirectTo: callbackUrl,
+        skipBrowserRedirect: true,
       },
     });
 
-    console.log('[OAuth] data:', data);
-    console.log('[OAuth] error:', error);
-
-    if (error) {
-      setError(error.message);
+    if (error || !data?.url) {
+      setError(error?.message ?? 'No se pudo iniciar sesión');
       setLoading(false);
       return;
     }
 
-    // If there's a URL to redirect to, do it manually as fallback
-    if (data?.url) {
+    // Open Google login in a popup
+    const width = 500;
+    const height = 600;
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+    const popup = window.open(
+      data.url,
+      'google-oauth',
+      `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no`
+    );
+
+    if (!popup) {
+      // Popup was blocked — fall back to redirect
       window.location.href = data.url;
+      return;
     }
+
+    // Listen for session once the popup completes and closes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        subscription.unsubscribe();
+        popup.close();
+        window.location.href = '/tracker';
+      }
+    });
+
+    // If user closes popup manually without logging in
+    const checkClosed = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(checkClosed);
+        subscription.unsubscribe();
+        setLoading(false);
+      }
+    }, 500);
   };
 
   return (

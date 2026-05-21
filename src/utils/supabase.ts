@@ -1,25 +1,20 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL as string;
+const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY as string;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase credentials in environment variables');
+  console.error('[Supabase] Missing env vars — PUBLIC_SUPABASE_URL or PUBLIC_SUPABASE_ANON_KEY not set');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(
+  supabaseUrl ?? 'http://localhost',
+  supabaseAnonKey ?? 'missing'
+);
 
 export async function getSession() {
   const { data: { session } } = await supabase.auth.getSession();
   return session;
-}
-
-export async function signUp(email: string, password: string) {
-  return supabase.auth.signUp({ email, password });
-}
-
-export async function signIn(email: string, password: string) {
-  return supabase.auth.signInWithPassword({ email, password });
 }
 
 export async function signOut() {
