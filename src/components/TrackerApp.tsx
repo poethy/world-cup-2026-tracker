@@ -45,7 +45,7 @@ export default function TrackerApp() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // Load user collection
+  // Load user collection — direct Supabase call (browser-side, no server proxy)
   useEffect(() => {
     async function loadCollection() {
       const { data: { session } } = await supabase.auth.getSession();
@@ -53,13 +53,15 @@ export default function TrackerApp() {
         window.location.href = '/auth/login';
         return;
       }
-      const response = await fetch('/api/user-collection', {
-        headers: { Authorization: `Bearer ${session.access_token}` },
-      });
-      if (response.ok) {
-        const result = await response.json();
+      const { data, error } = await supabase
+        .from('user_stickers')
+        .select('sticker_id')
+        .eq('user_id', session.user.id);
+      if (error) {
+        console.error('[TrackerApp] load error:', error.message);
+      } else {
         const map: OwnedMap = {};
-        for (const row of result.data ?? []) map[row.sticker_id] = true;
+        for (const row of data ?? []) map[row.sticker_id] = true;
         setOwned(map);
       }
       setLoadingCollection(false);
@@ -82,27 +84,25 @@ export default function TrackerApp() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
-      const headers = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.access_token}`,
-      };
-      let res: Response;
+
       if (newOwned) {
-        res = await fetch('/api/user-collection', {
-          method: 'POST', headers,
-          body: JSON.stringify({ sticker_id: number }),
-        });
+        const { error } = await supabase
+          .from('user_stickers')
+          .upsert(
+            { user_id: session.user.id, sticker_id: number, status: 'have' },
+            { onConflict: 'user_id,sticker_id' }
+          );
+        if (error) throw error;
       } else {
-        res = await fetch(`/api/user-collection?sticker_id=${number}`, { method: 'DELETE', headers });
+        const { error } = await supabase
+          .from('user_stickers')
+          .delete()
+          .eq('user_id', session.user.id)
+          .eq('sticker_id', number);
+        if (error) throw error;
       }
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        console.error('[TrackerApp] save failed', res.status, err);
-        // Revert optimistic update
-        setOwned(prev => ({ ...prev, [number]: !newOwned }));
-      }
-    } catch (e) {
-      console.error('[TrackerApp] network error', e);
+    } catch (e: any) {
+      console.error('[TrackerApp] save error:', e?.message ?? e);
       setOwned(prev => ({ ...prev, [number]: !newOwned }));
     } finally {
       setToggling(prev => { const n = new Set(prev); n.delete(number); return n; });

@@ -198,14 +198,14 @@ import { COUNTRIES, FIFA_TO_ISO } from '../data/album-structure';
     const ctaOpen = document.getElementById('cta-open-album');
     if (ctaOpen) ctaOpen.style.display = 'inline-flex';
 
-    // Load collection count for progress stat
-    fetch('/api/user-collection', {
-      headers: { Authorization: `Bearer ${session.access_token}` },
-    })
-      .then(r => r.json())
-      .then(result => {
-        if (result.hasCount !== undefined) {
-          const pct = Math.round((result.hasCount / 980) * 100);
+    // Load collection count — direct Supabase call (no server proxy)
+    supabase
+      .from('user_stickers')
+      .select('sticker_id', { count: 'exact', head: true })
+      .eq('user_id', session.user.id)
+      .then(({ count }) => {
+        if (count != null) {
+          const pct = Math.round((count / 980) * 100);
           const el = document.getElementById('stat-progress');
           const lbl = document.getElementById('stat-progress-label');
           if (el) el.textContent = `${pct}%`;
