@@ -1,9 +1,13 @@
 import type { APIRoute } from 'astro';
 import { createClient } from '@supabase/supabase-js';
 
-function getSupabaseWithAuth(request: Request) {
+function getToken(request: Request): string | undefined {
   const authHeader = request.headers.get('Authorization');
-  const token = authHeader?.replace('Bearer ', '');
+  const token = authHeader?.replace('Bearer ', '').trim();
+  return token || undefined;
+}
+
+function getSupabaseClient(token?: string) {
   return createClient(
     import.meta.env.PUBLIC_SUPABASE_URL,
     import.meta.env.PUBLIC_SUPABASE_ANON_KEY,
@@ -12,10 +16,14 @@ function getSupabaseWithAuth(request: Request) {
 }
 
 export const GET: APIRoute = async ({ request }) => {
-  const supabase = getSupabaseWithAuth(request);
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const token = getToken(request);
+  const supabase = getSupabaseClient(token);
+
+  // Pass token explicitly — more reliable in server-side (no localStorage) context
+  const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
   if (authError || !user) {
+    console.error('[GET /user-collection] Auth failed:', authError?.message ?? 'no user');
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
       headers: { 'Content-Type': 'application/json' },
@@ -28,6 +36,7 @@ export const GET: APIRoute = async ({ request }) => {
     .eq('user_id', user.id);
 
   if (error) {
+    console.error('[GET /user-collection] DB error:', error.message);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
@@ -42,10 +51,13 @@ export const GET: APIRoute = async ({ request }) => {
 };
 
 export const POST: APIRoute = async ({ request }) => {
-  const supabase = getSupabaseWithAuth(request);
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const token = getToken(request);
+  const supabase = getSupabaseClient(token);
+
+  const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
   if (authError || !user) {
+    console.error('[POST /user-collection] Auth failed:', authError?.message ?? 'no user');
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
       headers: { 'Content-Type': 'application/json' },
@@ -69,6 +81,8 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
+  const now = new Date().toISOString();
+
   const { data, error } = await supabase
     .from('user_stickers')
     .upsert(
@@ -76,6 +90,7 @@ export const POST: APIRoute = async ({ request }) => {
         user_id: user.id,
         sticker_id: body.sticker_id,
         status: body.status ?? 'have',
+        marked_at: now,
       },
       { onConflict: 'user_id,sticker_id' }
     )
@@ -83,7 +98,8 @@ export const POST: APIRoute = async ({ request }) => {
     .single();
 
   if (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error('[POST /user-collection] DB error:', error.message, '| details:', error.details, '| hint:', error.hint);
+    return new Response(JSON.stringify({ error: error.message, details: error.details, hint: error.hint }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
@@ -96,10 +112,13 @@ export const POST: APIRoute = async ({ request }) => {
 };
 
 export const DELETE: APIRoute = async ({ request }) => {
-  const supabase = getSupabaseWithAuth(request);
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const token = getToken(request);
+  const supabase = getSupabaseClient(token);
+
+  const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
   if (authError || !user) {
+    console.error('[DELETE /user-collection] Auth failed:', authError?.message ?? 'no user');
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
       headers: { 'Content-Type': 'application/json' },
@@ -123,6 +142,7 @@ export const DELETE: APIRoute = async ({ request }) => {
     .eq('sticker_id', Number(stickerId));
 
   if (error) {
+    console.error('[DELETE /user-collection] DB error:', error.message);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },

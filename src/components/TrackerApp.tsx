@@ -86,15 +86,23 @@ export default function TrackerApp() {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${session.access_token}`,
       };
+      let res: Response;
       if (newOwned) {
-        await fetch('/api/user-collection', {
+        res = await fetch('/api/user-collection', {
           method: 'POST', headers,
           body: JSON.stringify({ sticker_id: number }),
         });
       } else {
-        await fetch(`/api/user-collection?sticker_id=${number}`, { method: 'DELETE', headers });
+        res = await fetch(`/api/user-collection?sticker_id=${number}`, { method: 'DELETE', headers });
       }
-    } catch {
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.error('[TrackerApp] save failed', res.status, err);
+        // Revert optimistic update
+        setOwned(prev => ({ ...prev, [number]: !newOwned }));
+      }
+    } catch (e) {
+      console.error('[TrackerApp] network error', e);
       setOwned(prev => ({ ...prev, [number]: !newOwned }));
     } finally {
       setToggling(prev => { const n = new Set(prev); n.delete(number); return n; });
