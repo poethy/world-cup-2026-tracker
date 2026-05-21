@@ -8,7 +8,7 @@ import { COUNTRIES, FIFA_TO_ISO } from '../data/album-structure';
     <!-- Top bar -->
     <header class="topbar">
       <div class="topbar__left">
-        <a href="/" class="logo" aria-label="Album26 — Home">
+        <a href="/" class="logo" aria-label="Tracker 26 — Home">
           <div class="logo__mark">
             <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
               <circle cx="16" cy="16" r="14.5" fill="none" stroke="var(--ink)" stroke-width="1.2"/>
@@ -18,8 +18,7 @@ import { COUNTRIES, FIFA_TO_ISO } from '../data/album-structure';
             </svg>
           </div>
           <div class="logo__text">
-            Album26
-            <small>Tracker · 26</small>
+            Tracker 26
           </div>
         </a>
 
@@ -34,6 +33,7 @@ import { COUNTRIES, FIFA_TO_ISO } from '../data/album-structure';
           <span class="user-chip__avatar" id="user-avatar">?</span>
           <span class="user-chip__name" id="user-name">User</span>
         </div>
+        <button class="btn btn--ghost" id="btn-logout" style="display:none">Sign out</button>
         <a href="/auth/login" class="btn btn--primary" id="signin-btn">Sign in</a>
       </div>
     </header>
@@ -183,6 +183,15 @@ import { COUNTRIES, FIFA_TO_ISO } from '../data/album-structure';
 
     const signinBtn = document.getElementById('signin-btn');
     if (signinBtn) signinBtn.style.display = 'none';
+
+    const logoutBtn = document.getElementById('btn-logout');
+    if (logoutBtn) {
+      logoutBtn.style.display = 'inline-flex';
+      logoutBtn.addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        window.location.href = '/auth/login';
+      });
+    }
 
     const ctaStart = document.getElementById('cta-start-tracking');
     if (ctaStart) ctaStart.style.display = 'none';
