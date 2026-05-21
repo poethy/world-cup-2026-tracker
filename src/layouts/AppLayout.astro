@@ -12,11 +12,8 @@ const { title } = Astro.props;
   <div class="app-container">
     <nav class="navbar">
       <div class="nav-content">
-        <h1 class="app-title">World Cup 2026 Tracker</h1>
-        <div class="nav-links">
-          <a href="/tracker">Tracker</a>
-          <a href="/api/logout" class="btn-logout">Logout</a>
-        </div>
+        <a href="/tracker" class="app-title">⚽ WC 2026 Tracker</a>
+        <button id="btn-logout" class="btn-logout">Cerrar sesión</button>
       </div>
     </nav>
     <main class="main-content">
@@ -24,6 +21,15 @@ const { title } = Astro.props;
     </main>
   </div>
 </RootLayout>
+
+<script>
+  import { supabase } from '../utils/supabase';
+
+  document.getElementById('btn-logout')?.addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/auth/login';
+  });
+</script>
 
 <style>
   .app-container {
@@ -35,14 +41,14 @@ const { title } = Astro.props;
   .navbar {
     background: #1f2937;
     color: white;
-    padding: 1rem 0;
-    border-bottom: 1px solid #374151;
+    padding: 0.875rem 0;
+    border-bottom: 3px solid #667eea;
   }
 
   .nav-content {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 0 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -50,41 +56,34 @@ const { title } = Astro.props;
 
   .app-title {
     margin: 0;
-    font-size: 1.5rem;
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-  }
-
-  .nav-links a {
+    font-size: 1.25rem;
+    font-weight: 700;
     color: white;
     text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .nav-links a:hover {
-    color: #60a5fa;
+    letter-spacing: -0.01em;
   }
 
   .btn-logout {
-    background: #ef4444;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
+    background: transparent;
+    border: 1px solid #4b5563;
+    color: #9ca3af;
+    padding: 0.4rem 0.875rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
   }
 
   .btn-logout:hover {
-    background: #dc2626;
-    color: white;
+    border-color: #ef4444;
+    color: #ef4444;
   }
 
   .main-content {
     flex: 1;
-    max-width: 1200px;
+    max-width: 1400px;
     width: 100%;
     margin: 0 auto;
-    padding: 2rem 1rem;
+    padding: 1.5rem 1.5rem;
   }
 </style>

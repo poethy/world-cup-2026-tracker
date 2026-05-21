@@ -12,118 +12,89 @@ export default function LoginForm() {
     setError('');
     setLoading(true);
 
-    try {
-      const { error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
 
-      if (authError) {
-        setError(authError.message);
-      } else {
-        // Redirect to tracker
-        window.location.href = '/tracker';
-      }
-    } catch (err) {
-      setError('An unexpected error occurred');
-    } finally {
+    if (authError) {
+      setError(authError.message);
       setLoading(false);
+    } else {
+      window.location.href = '/tracker';
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="form">
-      <div className="form-group">
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          placeholder="your@email.com"
-        />
-      </div>
+    <>
+      <style>{`
+        .auth-form { display: flex; flex-direction: column; gap: 1.25rem; }
+        .auth-form .field { display: flex; flex-direction: column; gap: 0.4rem; }
+        .auth-form label { font-size: 0.875rem; font-weight: 500; color: #374151; }
+        .auth-form input {
+          padding: 0.65rem 0.875rem;
+          border: 1px solid #d1d5db;
+          border-radius: 6px;
+          font-size: 0.95rem;
+          width: 100%;
+          box-sizing: border-box;
+          transition: border-color 0.15s;
+        }
+        .auth-form input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.12); }
+        .auth-error {
+          padding: 0.65rem 0.875rem;
+          background: #fef2f2;
+          color: #b91c1c;
+          border: 1px solid #fecaca;
+          border-radius: 6px;
+          font-size: 0.85rem;
+        }
+        .auth-submit {
+          width: 100%;
+          padding: 0.75rem;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          border: none;
+          border-radius: 6px;
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: opacity 0.15s;
+        }
+        .auth-submit:hover:not(:disabled) { opacity: 0.9; }
+        .auth-submit:disabled { opacity: 0.55; cursor: not-allowed; }
+      `}</style>
 
-      <div className="form-group">
-        <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          placeholder="••••••••"
-        />
-      </div>
+      <form onSubmit={handleSubmit} className="auth-form">
+        <div className="field">
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            placeholder="tu@email.com"
+            autoComplete="email"
+          />
+        </div>
 
-      {error && <div className="form-error">{error}</div>}
+        <div className="field">
+          <label htmlFor="password">Contraseña</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            placeholder="••••••••"
+            autoComplete="current-password"
+          />
+        </div>
 
-      <button type="submit" disabled={loading} className="btn-submit">
-        {loading ? 'Logging in...' : 'Login'}
-      </button>
-    </form>
+        {error && <div className="auth-error">{error}</div>}
+
+        <button type="submit" disabled={loading} className="auth-submit">
+          {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+        </button>
+      </form>
+    </>
   );
 }
-
-const styles = `
-  .form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .form-group label {
-    font-weight: 500;
-    color: #111827;
-  }
-
-  .form-group input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    font-size: 1rem;
-  }
-
-  .form-group input:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  }
-
-  .form-error {
-    padding: 0.75rem;
-    background: #fee2e2;
-    color: #991b1b;
-    border-radius: 4px;
-    font-size: 0.875rem;
-  }
-
-  .btn-submit {
-    width: 100%;
-    padding: 0.75rem;
-    background: #667eea;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-
-  .btn-submit:hover:not(:disabled) {
-    background: #5568d3;
-  }
-
-  .btn-submit:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
