@@ -6,9 +6,4 @@ export default defineConfig({
   integrations: [react()],
   output: 'server',
   adapter: vercel({ webAnalytics: { enabled: false } }),
-  vite: {
-    ssr: {
-      external: ['@supabase/supabase-js'],
-    },
-  },
 });
