@@ -172,4 +172,4 @@ The sticker catalog (`src/data/stickers.ts`) is the source of truth for all 980 
 
 ## License
 
-MIT
+[MIT](LICENSE.md)
