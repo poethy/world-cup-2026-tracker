@@ -1,54 +1,8 @@
 ---
 import AppLayout from '../layouts/AppLayout.astro';
-import { getSession } from '../utils/supabase';
-
-// Check if user is logged in
-const session = await getSession();
-if (!session) {
-  return Astro.redirect('/auth/login');
-}
+import TrackerApp from '../components/TrackerApp';
 ---
 
 <AppLayout title="Tracker - World Cup 2026">
-  <div class="tracker-container">
-    <h1>Sticker Tracker</h1>
-    <p class="subtitle">Track your World Cup 2026 Panini album progress</p>
-
-    <div class="placeholder">
-      <p>Tracker components will be loaded here</p>
-      <p style="font-size: 0.875rem; color: #6b7280;">
-        Search filters, sticker grid, and statistics panel coming in Phase 4
-      </p>
-    </div>
-  </div>
+  <TrackerApp client:load />
 </AppLayout>
-
-<style>
-  .tracker-container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .tracker-container h1 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .subtitle {
-    color: #6b7280;
-    margin-bottom: 2rem;
-  }
-
-  .placeholder {
-    background: #f0f9ff;
-    border: 2px dashed #0284c7;
-    border-radius: 8px;
-    padding: 3rem;
-    text-align: center;
-    color: #0c4a6e;
-  }
-
-  .placeholder p {
-    margin: 0.5rem 0;
-  }
-</style>
