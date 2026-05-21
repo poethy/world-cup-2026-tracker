@@ -1,101 +1,196 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>World Cup 2026 Tracker - Home</title>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      html {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-        font-size: 16px;
-      }
-      body { background: #f9fafb; color: #111827; line-height: 1.5; }
-      h1, h2 { line-height: 1.2; margin-bottom: 0.5rem; }
-      a { color: #3b82f6; text-decoration: none; }
-      a:hover { text-decoration: underline; }
-      button { cursor: pointer; border: none; border-radius: 4px; padding: 0.5rem 1rem; font-size: 1rem; transition: all 0.2s; }
-      button:hover { opacity: 0.9; }
+---
+import RootLayout from '../layouts/RootLayout.astro';
+import { COUNTRIES } from '../data/album-structure';
+---
 
-      .landing-container { min-height: 100vh; display: flex; flex-direction: column; }
-      .landing-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4rem 2rem; text-align: center; }
-      .landing-header h1 { font-size: 3rem; margin-bottom: 1rem; }
-      .landing-header p { font-size: 1.25rem; opacity: 0.9; }
-      .landing-content { flex: 1; max-width: 1000px; margin: 0 auto; padding: 3rem 1rem; width: 100%; }
-      .features { margin-bottom: 4rem; }
-      .features h2 { font-size: 2rem; margin-bottom: 2rem; text-align: center; }
-      .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
-      .feature-card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s; }
-      .feature-card:hover { transform: translateY(-4px); }
-      .feature-card h3 { font-size: 1.25rem; margin-bottom: 1rem; }
-      .feature-card p { color: #6b7280; }
-      .cta { background: #f3f4f6; padding: 3rem 2rem; border-radius: 8px; text-align: center; margin-bottom: 4rem; }
-      .cta h2 { font-size: 2rem; margin-bottom: 1.5rem; }
-      .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-      .btn { display: inline-block; padding: 0.75rem 2rem; border-radius: 4px; text-decoration: none; font-weight: 500; transition: all 0.2s; }
-      .btn-primary { background: #667eea; color: white; }
-      .btn-primary:hover { background: #5568d3; }
-.info { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-      .info h2 { font-size: 1.5rem; margin-bottom: 1rem; }
-      .info p { color: #6b7280; line-height: 1.6; margin-bottom: 1rem; }
-
-      @media (max-width: 640px) {
-        .landing-header h1 { font-size: 2rem; }
-        .features-grid { grid-template-columns: 1fr; }
-        .cta-buttons { flex-direction: column; }
-        .btn { width: 100%; }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="landing-container">
-      <header class="landing-header">
-        <h1>World Cup 2026 Sticker Tracker</h1>
-        <p>Track your Panini FIFA World Cup 2026 album progress</p>
-      </header>
-
-      <main class="landing-content">
-        <section class="features">
-          <h2>Features</h2>
-          <div class="features-grid">
-            <div class="feature-card">
-              <h3>📊 Track Progress</h3>
-              <p>Keep track of which stickers you have and which ones you need</p>
-            </div>
-            <div class="feature-card">
-              <h3>📈 Statistics</h3>
-              <p>View detailed statistics about your collection by country</p>
-            </div>
-            <div class="feature-card">
-              <h3>🔍 Search & Filter</h3>
-              <p>Find stickers by country, page number, or player name</p>
-            </div>
-            <div class="feature-card">
-              <h3>🌐 Open Source API</h3>
-              <p>Access complete sticker catalog data for your own projects</p>
-            </div>
+<RootLayout title="World Cup 2026 Tracker">
+  <div class="app">
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <a href="/" class="logo" aria-label="Album26 — Home">
+          <div class="logo__mark">
+            <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
+              <circle cx="16" cy="16" r="14.5" fill="none" stroke="var(--ink)" stroke-width="1.2"/>
+              <circle cx="16" cy="16" r="1.8" fill="var(--accent)"/>
+              <path d="M2 16 H30 M16 2 V30" stroke="var(--ink)" stroke-width="0.6" opacity="0.35"/>
+              <path d="M6 16 a10 10 0 0 1 20 0" stroke="var(--ink)" stroke-width="0.6" fill="none" opacity="0.35"/>
+            </svg>
           </div>
-        </section>
-
-        <section class="cta">
-          <h2>Get Started</h2>
-          <div class="cta-buttons">
-            <a href="/auth/login" class="btn btn-primary">Iniciar sesión</a>
+          <div class="logo__text">
+            Album26
+            <small>Tracker · 26</small>
           </div>
-        </section>
+        </a>
 
-        <section class="info">
-          <h2>About This Project</h2>
-          <p>
-            This is an open-source tracker for the FIFA World Cup 2026 Panini sticker album.
-            The complete sticker catalog is available via our public API for anyone to use.
+        <nav class="topbar__nav" id="logged-in-nav" style="display:none">
+          <a href="/" class="is-active">Overview</a>
+          <a href="/tracker">Tracker</a>
+        </nav>
+      </div>
+
+      <div class="topbar__right">
+        <div class="user-chip" id="user-chip" style="display:none">
+          <span class="user-chip__avatar" id="user-avatar">?</span>
+          <span class="user-chip__name" id="user-name">User</span>
+        </div>
+        <a href="/auth/login" class="btn btn--primary" id="signin-btn">Sign in</a>
+      </div>
+    </header>
+
+    <div class="home">
+      <!-- Hero -->
+      <section class="home__hero">
+        <div class="home__eyebrow-row">
+          <span class="pill">Unofficial · Open-source</span>
+          <span class="pill">Edition 26 · 980 stickers</span>
+        </div>
+
+        <h1 class="home__headline">
+          Track every <span style="color:var(--accent)">sticker</span>,<br>finish every page.
+        </h1>
+
+        <p class="home__lede">
+          A clean, fast tracker for your World Cup 2026 sticker album.
+          Mark what you have, see what's missing, and never buy a duplicate again.
+          Designed for collectors, not for ads.
+        </p>
+
+        <div class="home__cta-row">
+          <a href="/tracker" class="btn btn--primary btn--lg" id="cta-open-album" style="display:none">
+            Open your album →
+          </a>
+          <a href="/auth/login" class="btn btn--primary btn--lg" id="cta-start-tracking">
+            Start tracking
+          </a>
+          <a href="/tracker" class="btn btn--lg">
+            Browse the album
+          </a>
+        </div>
+      </section>
+
+      <!-- Numbers band -->
+      <div class="home__stats">
+        <div class="home__stat">
+          <span class="home__stat-num">980</span>
+          <span class="home__stat-label">Stickers in edition</span>
+        </div>
+        <div class="home__stat">
+          <span class="home__stat-num">48</span>
+          <span class="home__stat-label">National teams</span>
+        </div>
+        <div class="home__stat">
+          <span class="home__stat-num">3</span>
+          <span class="home__stat-label">Host countries</span>
+        </div>
+        <div class="home__stat">
+          <span class="home__stat-num" id="stat-progress">24h</span>
+          <span class="home__stat-label" id="stat-progress-label">Free, always</span>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <section class="home__features">
+        <article class="feature">
+          <span class="feature__num">01</span>
+          <h3 class="feature__title">Sticker-by-sticker tracking</h3>
+          <p class="feature__body">
+            Tap to mark owned. Filter by country, owned, or missing.
+            Your progress syncs across devices the moment you sign in.
           </p>
-          <p>
-            The album contains 980 stickers across 112 pages, including stickers for all 48 participating teams,
-            special FIFA content, and parallel versions.
+        </article>
+        <article class="feature">
+          <span class="feature__num">02</span>
+          <h3 class="feature__title">Smart missing list</h3>
+          <p class="feature__body">
+            See which teams are closest to complete, sort by gaps,
+            and export a clean shopping list before your next swap meet.
           </p>
-        </section>
-      </main>
+        </article>
+        <article class="feature">
+          <span class="feature__num">03</span>
+          <h3 class="feature__title">Open-source API</h3>
+          <p class="feature__body">
+            Access the complete 980-sticker catalog via our public REST API.
+            Build your own app or integrate with existing tools.
+          </p>
+        </article>
+      </section>
+
+      <!-- Teams strip -->
+      <section class="home__teams">
+        <header class="home__teams-head">
+          <h2>All 48 nations</h2>
+          <span class="eyebrow">FIFA World Cup 2026</span>
+        </header>
+        <div class="home__teams-grid">
+          {COUNTRIES.map(c => (
+            <a href={`/tracker?section=${c.code}`} class="team-pill">
+              <div
+                class={`flag flag--${c.dir}`}
+                style="width:36px;height:24px;flex-shrink:0"
+                title={c.name}
+                aria-label={c.name}
+              >
+                <span style={`background:${c.stripes[0]}`}></span>
+                <span style={`background:${c.stripes[1]}`}></span>
+                <span style={`background:${c.stripes[2]}`}></span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:2px">
+                <span class="team-pill__name">{c.name}</span>
+                <span class="team-pill__code">{c.code} · {c.region}{c.host ? ' · HOST' : ''}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
     </div>
-  </body>
-</html>
+  </div>
+</RootLayout>
+
+<script>
+  import { supabase } from '../utils/supabase';
+
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (!session) return;
+
+    const name = session.user.user_metadata?.full_name
+      || session.user.email?.split('@')[0]
+      || 'User';
+    const initial = name.charAt(0).toUpperCase();
+
+    const chip = document.getElementById('user-chip');
+    if (chip) chip.style.display = 'flex';
+    const avatar = document.getElementById('user-avatar');
+    if (avatar) avatar.textContent = initial;
+    const userName = document.getElementById('user-name');
+    if (userName) userName.textContent = name;
+
+    const nav = document.getElementById('logged-in-nav');
+    if (nav) nav.style.display = 'flex';
+
+    const signinBtn = document.getElementById('signin-btn');
+    if (signinBtn) signinBtn.style.display = 'none';
+
+    const ctaStart = document.getElementById('cta-start-tracking');
+    if (ctaStart) ctaStart.style.display = 'none';
+    const ctaOpen = document.getElementById('cta-open-album');
+    if (ctaOpen) ctaOpen.style.display = 'inline-flex';
+
+    // Load collection count for progress stat
+    fetch('/api/user-collection', {
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    })
+      .then(r => r.json())
+      .then(result => {
+        if (result.hasCount !== undefined) {
+          const pct = Math.round((result.hasCount / 980) * 100);
+          const el = document.getElementById('stat-progress');
+          const lbl = document.getElementById('stat-progress-label');
+          if (el) el.textContent = `${pct}%`;
+          if (lbl) lbl.textContent = 'Your progress';
+        }
+      })
+      .catch(() => {});
+  });
+</script>

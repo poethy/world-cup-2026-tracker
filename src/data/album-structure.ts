@@ -71,54 +71,109 @@ export interface StickerStats {
   };
 }
 
-// Country codes for all 48 teams
-export const COUNTRIES = [
-  { code: 'ALG', name: 'Algeria' },
-  { code: 'ARG', name: 'Argentina' },
-  { code: 'AUS', name: 'Australia' },
-  { code: 'AUT', name: 'Austria' },
-  { code: 'BEL', name: 'Belgium' },
-  { code: 'BIH', name: 'Bosnia' },
-  { code: 'BRA', name: 'Brazil' },
-  { code: 'CAN', name: 'Canada' },
-  { code: 'CIV', name: 'Ivory Coast' },
-  { code: 'COD', name: 'Congo DR' },
-  { code: 'COL', name: 'Colombia' },
-  { code: 'CPV', name: 'Cape Verde' },
-  { code: 'CRO', name: 'Croatia' },
-  { code: 'CUW', name: 'Curaçao' },
-  { code: 'CZE', name: 'Czechia' },
-  { code: 'ECU', name: 'Ecuador' },
-  { code: 'EGY', name: 'Egypt' },
-  { code: 'ENG', name: 'England' },
-  { code: 'ESP', name: 'Spain' },
-  { code: 'FRA', name: 'France' },
-  { code: 'GER', name: 'Germany' },
-  { code: 'GHA', name: 'Ghana' },
-  { code: 'HAI', name: 'Haiti' },
-  { code: 'IRN', name: 'Iran' },
-  { code: 'IRQ', name: 'Iraq' },
-  { code: 'JOR', name: 'Jordan' },
-  { code: 'JPN', name: 'Japan' },
-  { code: 'KOR', name: 'South Korea' },
-  { code: 'KSA', name: 'Saudi Arabia' },
-  { code: 'MAR', name: 'Morocco' },
-  { code: 'MEX', name: 'Mexico' },
-  { code: 'NED', name: 'Netherlands' },
-  { code: 'NOR', name: 'Norway' },
-  { code: 'NZL', name: 'New Zealand' },
-  { code: 'PAN', name: 'Panama' },
-  { code: 'PAR', name: 'Paraguay' },
-  { code: 'POR', name: 'Portugal' },
-  { code: 'QAT', name: 'Qatar' },
-  { code: 'RSA', name: 'South Africa' },
-  { code: 'SCO', name: 'Scotland' },
-  { code: 'SEN', name: 'Senegal' },
-  { code: 'SUI', name: 'Switzerland' },
-  { code: 'SWE', name: 'Sweden' },
-  { code: 'TUN', name: 'Tunisia' },
-  { code: 'TUR', name: 'Turkey' },
-  { code: 'URU', name: 'Uruguay' },
-  { code: 'USA', name: 'United States' },
-  { code: 'UZB', name: 'Uzbekistan' },
+export interface Country {
+  code: string;
+  name: string;
+  stripes: [string, string, string];
+  dir: 'h' | 'v';
+  region: string;
+  host?: boolean;
+  primary: string;
+}
+
+// Country codes for all 48 teams — with abstract flag colors (3 stripes) and region
+export const COUNTRIES: Country[] = [
+  { code: 'ALG', name: 'Algeria',       primary: '#006233', stripes: ['#006233', '#FFFFFF', '#006233'], dir: 'h', region: 'CAF' },
+  { code: 'ARG', name: 'Argentina',     primary: '#74ACDF', stripes: ['#74ACDF', '#FFFFFF', '#74ACDF'], dir: 'h', region: 'CONMEBOL' },
+  { code: 'AUS', name: 'Australia',     primary: '#00008B', stripes: ['#00008B', '#FFFFFF', '#FF0000'], dir: 'h', region: 'AFC' },
+  { code: 'AUT', name: 'Austria',       primary: '#ED2939', stripes: ['#ED2939', '#FFFFFF', '#ED2939'], dir: 'h', region: 'UEFA' },
+  { code: 'BEL', name: 'Belgium',       primary: '#FAD916', stripes: ['#000000', '#FAD916', '#EF3340'], dir: 'v', region: 'UEFA' },
+  { code: 'BIH', name: 'Bosnia',        primary: '#002395', stripes: ['#002395', '#FFCD00', '#002395'], dir: 'h', region: 'UEFA' },
+  { code: 'BRA', name: 'Brazil',        primary: '#009C3B', stripes: ['#009C3B', '#FFDF00', '#009C3B'], dir: 'h', region: 'CONMEBOL' },
+  { code: 'CAN', name: 'Canada',        primary: '#FF0000', stripes: ['#FF0000', '#FFFFFF', '#FF0000'], dir: 'v', region: 'CONCACAF', host: true },
+  { code: 'CIV', name: 'Ivory Coast',   primary: '#FF6600', stripes: ['#FF6600', '#FFFFFF', '#009A44'], dir: 'v', region: 'CAF' },
+  { code: 'COD', name: 'Congo DR',      primary: '#007FFF', stripes: ['#007FFF', '#FFCD00', '#CE1126'], dir: 'h', region: 'CAF' },
+  { code: 'COL', name: 'Colombia',      primary: '#FCD116', stripes: ['#FCD116', '#003087', '#CE1126'], dir: 'h', region: 'CONMEBOL' },
+  { code: 'CPV', name: 'Cape Verde',    primary: '#003893', stripes: ['#003893', '#FFFFFF', '#CF2027'], dir: 'h', region: 'CAF' },
+  { code: 'CRO', name: 'Croatia',       primary: '#FF0000', stripes: ['#FF0000', '#FFFFFF', '#0035A0'], dir: 'h', region: 'UEFA' },
+  { code: 'CUW', name: 'Curaçao',       primary: '#003DA5', stripes: ['#003DA5', '#F7DB00', '#003DA5'], dir: 'h', region: 'CONCACAF' },
+  { code: 'CZE', name: 'Czechia',       primary: '#D7141A', stripes: ['#D7141A', '#FFFFFF', '#11457E'], dir: 'h', region: 'UEFA' },
+  { code: 'ECU', name: 'Ecuador',       primary: '#FFD100', stripes: ['#FFD100', '#003893', '#FF0000'], dir: 'h', region: 'CONMEBOL' },
+  { code: 'EGY', name: 'Egypt',         primary: '#CE1126', stripes: ['#CE1126', '#FFFFFF', '#000000'], dir: 'h', region: 'CAF' },
+  { code: 'ENG', name: 'England',       primary: '#CF142B', stripes: ['#FFFFFF', '#CF142B', '#FFFFFF'], dir: 'h', region: 'UEFA' },
+  { code: 'ESP', name: 'Spain',         primary: '#C60B1E', stripes: ['#C60B1E', '#FFC400', '#C60B1E'], dir: 'h', region: 'UEFA' },
+  { code: 'FRA', name: 'France',        primary: '#0055A4', stripes: ['#0055A4', '#FFFFFF', '#EF4135'], dir: 'v', region: 'UEFA' },
+  { code: 'GER', name: 'Germany',       primary: '#DD0000', stripes: ['#000000', '#DD0000', '#FFCE00'], dir: 'h', region: 'UEFA' },
+  { code: 'GHA', name: 'Ghana',         primary: '#006B3F', stripes: ['#006B3F', '#FCD116', '#CE1126'], dir: 'h', region: 'CAF' },
+  { code: 'HAI', name: 'Haiti',         primary: '#00209F', stripes: ['#00209F', '#D21034', '#00209F'], dir: 'h', region: 'CONCACAF' },
+  { code: 'IRN', name: 'Iran',          primary: '#239F40', stripes: ['#239F40', '#FFFFFF', '#DA0000'], dir: 'h', region: 'AFC' },
+  { code: 'IRQ', name: 'Iraq',          primary: '#CE1126', stripes: ['#CE1126', '#FFFFFF', '#000000'], dir: 'h', region: 'AFC' },
+  { code: 'JOR', name: 'Jordan',        primary: '#007A3D', stripes: ['#007A3D', '#FFFFFF', '#000000'], dir: 'h', region: 'AFC' },
+  { code: 'JPN', name: 'Japan',         primary: '#BC002D', stripes: ['#FFFFFF', '#BC002D', '#FFFFFF'], dir: 'h', region: 'AFC' },
+  { code: 'KOR', name: 'South Korea',   primary: '#C60C30', stripes: ['#FFFFFF', '#C60C30', '#003478'], dir: 'h', region: 'AFC' },
+  { code: 'KSA', name: 'Saudi Arabia',  primary: '#006C35', stripes: ['#006C35', '#FFFFFF', '#006C35'], dir: 'h', region: 'AFC' },
+  { code: 'MAR', name: 'Morocco',       primary: '#C1272D', stripes: ['#C1272D', '#006233', '#C1272D'], dir: 'h', region: 'CAF' },
+  { code: 'MEX', name: 'Mexico',        primary: '#006847', stripes: ['#006847', '#FFFFFF', '#CE1126'], dir: 'v', region: 'CONCACAF', host: true },
+  { code: 'NED', name: 'Netherlands',   primary: '#AE1C28', stripes: ['#AE1C28', '#FFFFFF', '#21468B'], dir: 'h', region: 'UEFA' },
+  { code: 'NOR', name: 'Norway',        primary: '#EF2B2D', stripes: ['#EF2B2D', '#FFFFFF', '#002868'], dir: 'h', region: 'UEFA' },
+  { code: 'NZL', name: 'New Zealand',   primary: '#00247D', stripes: ['#00247D', '#CC142B', '#FFFFFF'], dir: 'h', region: 'OFC' },
+  { code: 'PAN', name: 'Panama',        primary: '#1F3B92', stripes: ['#CE1126', '#FFFFFF', '#1F3B92'], dir: 'h', region: 'CONCACAF' },
+  { code: 'PAR', name: 'Paraguay',      primary: '#D52B1E', stripes: ['#D52B1E', '#FFFFFF', '#0038A8'], dir: 'h', region: 'CONMEBOL' },
+  { code: 'POR', name: 'Portugal',      primary: '#006600', stripes: ['#006600', '#CC0000', '#006600'], dir: 'v', region: 'UEFA' },
+  { code: 'QAT', name: 'Qatar',         primary: '#8D1B3D', stripes: ['#8D1B3D', '#FFFFFF', '#8D1B3D'], dir: 'h', region: 'AFC' },
+  { code: 'RSA', name: 'South Africa',  primary: '#007A4D', stripes: ['#000000', '#FFB612', '#007A4D'], dir: 'h', region: 'CAF' },
+  { code: 'SCO', name: 'Scotland',      primary: '#003F87', stripes: ['#003F87', '#FFFFFF', '#003F87'], dir: 'h', region: 'UEFA' },
+  { code: 'SEN', name: 'Senegal',       primary: '#00853F', stripes: ['#00853F', '#FDEF42', '#E31B23'], dir: 'v', region: 'CAF' },
+  { code: 'SUI', name: 'Switzerland',   primary: '#FF0000', stripes: ['#FF0000', '#FFFFFF', '#FF0000'], dir: 'h', region: 'UEFA' },
+  { code: 'SWE', name: 'Sweden',        primary: '#006AA7', stripes: ['#006AA7', '#FECC02', '#006AA7'], dir: 'h', region: 'UEFA' },
+  { code: 'TUN', name: 'Tunisia',       primary: '#E70013', stripes: ['#E70013', '#FFFFFF', '#E70013'], dir: 'h', region: 'CAF' },
+  { code: 'TUR', name: 'Turkey',        primary: '#E30A17', stripes: ['#E30A17', '#FFFFFF', '#E30A17'], dir: 'h', region: 'UEFA' },
+  { code: 'URU', name: 'Uruguay',       primary: '#5EB6E4', stripes: ['#FFFFFF', '#5EB6E4', '#FFFFFF'], dir: 'h', region: 'CONMEBOL' },
+  { code: 'USA', name: 'United States', primary: '#3C3B6E', stripes: ['#B22234', '#FFFFFF', '#3C3B6E'], dir: 'h', region: 'CONCACAF', host: true },
+  { code: 'UZB', name: 'Uzbekistan',    primary: '#1EB53A', stripes: ['#1EB53A', '#FFFFFF', '#CE1126'], dir: 'h', region: 'AFC' },
 ];
+
+// Quick lookup map
+export const COUNTRY_BY_CODE: Record<string, Country> = Object.fromEntries(
+  COUNTRIES.map(c => [c.code, c])
+);
+
+// Section order for the tracker
+export const SECTION_ORDER = [
+  'COVER', 'TRN', 'HOST',
+  ...COUNTRIES.map(c => c.code),
+];
+
+// Human-readable section labels
+export const SECTION_LABELS: Record<string, string> = {
+  COVER: 'Cover',
+  TRN: 'Tournament',
+  HOST: 'Host Nations',
+  ...Object.fromEntries(COUNTRIES.map(c => [c.code, c.name])),
+};
+
+// Derive sticker section key from existing data
+export function getStickerSectionKey(countryCode: string, number: number): string {
+  if (countryCode === 'WP') return 'COVER';
+  if (countryCode === 'FWC') {
+    if (number <= 6) return 'TRN';
+    return 'HOST';
+  }
+  return countryCode;
+}
+
+// Derive sticker type for the modal
+export function getStickerType(name: string, countryCode: string, number: number): string {
+  if (countryCode === 'WP') return 'cover';
+  if (countryCode === 'FWC' && number <= 6) {
+    if (name.toLowerCase().includes('emblem')) return 'emblem';
+    if (name.toLowerCase().includes('mascot')) return 'mascot';
+    if (name.toLowerCase().includes('slogan')) return 'slogan';
+    if (name.toLowerCase().includes('ball')) return 'ball';
+    if (name.toLowerCase().includes('trophy')) return 'trophy';
+    return 'emblem';
+  }
+  if (countryCode === 'FWC') return 'host';
+  if (name === 'Emblem' || name === 'Team Photo') return 'squad';
+  return 'player';
+}

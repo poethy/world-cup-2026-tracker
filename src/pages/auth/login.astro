@@ -3,88 +3,62 @@ import RootLayout from '../../layouts/RootLayout.astro';
 import GoogleAuthButton from '../../components/auth/GoogleAuthButton';
 ---
 
-<RootLayout title="Iniciar sesión - WC 2026 Tracker">
-  <div class="auth-container">
-    <div class="auth-card">
-      <div class="auth-header">
-        <div class="auth-icon">⚽</div>
-        <h1>World Cup 2026 Tracker</h1>
-        <p>Inicia sesión para llevar el seguimiento de tu álbum Panini</p>
+<RootLayout title="Sign in — WC 2026 Tracker">
+  <div class="login">
+    <!-- Decorative left panel — Stadium Night pitch art -->
+    <aside class="login__art" aria-hidden="true">
+      <svg class="pitch-lines" viewBox="0 0 600 800" preserveAspectRatio="none" aria-hidden="true">
+        <rect x="40" y="40" width="520" height="720" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.35"/>
+        <line x1="40" y1="400" x2="560" y2="400" stroke="currentColor" stroke-width="1.2" opacity="0.35"/>
+        <circle cx="300" cy="400" r="80" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.35"/>
+        <rect x="200" y="40" width="200" height="120" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.35"/>
+        <rect x="200" y="640" width="200" height="120" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.35"/>
+        <rect x="250" y="40" width="100" height="40" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.35"/>
+        <rect x="250" y="720" width="100" height="40" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.35"/>
+      </svg>
+      <div style="position:absolute;inset:0;display:grid;place-items:center;color:var(--ink)">
+        <div style="text-align:center;padding:40px">
+          <div class="mono" style="font-size:11px;letter-spacing:0.18em;color:var(--muted)">
+            KICK-OFF · JUNE 11
+          </div>
+          <div class="display" style="font-size:clamp(56px,8vw,132px);margin-top:16px;color:var(--accent);line-height:0.9">
+            26
+          </div>
+          <div class="display" style="font-size:28px;margin-top:8px">
+            ALBUM.
+          </div>
+          <div class="mono" style="margin-top:24px;font-size:11px;letter-spacing:0.2em;color:var(--muted)">
+            CAN · MEX · USA
+          </div>
+        </div>
       </div>
+    </aside>
 
-      <GoogleAuthButton client:load />
+    <!-- Sign-in form -->
+    <main class="login__form-wrap">
+      <div class="login__card">
+        <div>
+          <span class="eyebrow">Sign in</span>
+          <h1 class="login__title display" style="margin-top:10px">
+            Welcome back to<br/>your album.
+          </h1>
+          <p class="login__subtitle" style="margin-top:14px">
+            Track your World Cup 2026 sticker collection across devices.
+            Your progress, your missing list — all in sync.
+          </p>
+        </div>
 
-      <p class="auth-note">
-        Al continuar, aceptas que guardemos tu progreso de colección en nuestra base de datos.
-      </p>
+        <GoogleAuthButton client:load />
 
-      <a href="/" class="back-link">← Volver al inicio</a>
-    </div>
+        <div class="login__divider">protected sign-in</div>
+
+        <p class="login__fineprint">
+          By continuing, you agree that we store your collection progress in
+          our database. We never share your data with third parties.
+        </p>
+
+        <a href="/" class="login__back">← Back to home</a>
+      </div>
+    </main>
   </div>
 </RootLayout>
-
-<style>
-  .auth-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 1rem;
-  }
-
-  .auth-card {
-    background: white;
-    padding: 2.5rem 2rem;
-    border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-    width: 100%;
-    max-width: 380px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .auth-header {
-    text-align: center;
-  }
-
-  .auth-icon {
-    font-size: 3rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .auth-header h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #111827;
-    margin: 0 0 0.5rem;
-  }
-
-  .auth-header p {
-    color: #6b7280;
-    font-size: 0.9rem;
-    margin: 0;
-  }
-
-  .auth-note {
-    font-size: 0.75rem;
-    color: #9ca3af;
-    text-align: center;
-    margin: 0;
-    line-height: 1.5;
-  }
-
-  .back-link {
-    display: block;
-    text-align: center;
-    font-size: 0.85rem;
-    color: #9ca3af;
-    text-decoration: none;
-    transition: color 0.15s;
-  }
-
-  .back-link:hover {
-    color: #6b7280;
-  }
-</style>
