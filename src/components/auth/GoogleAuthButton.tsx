@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import { supabase } from '../../utils/supabase';
+import { LocaleProvider, useI18n } from '../LocaleProvider';
+import type { Locale } from '../../i18n';
 
-export default function GoogleAuthButton() {
+interface GoogleAuthButtonProps {
+  locale: Locale;
+}
+
+function GoogleAuthButtonInner() {
+  const { tr } = useI18n();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -20,12 +27,11 @@ export default function GoogleAuthButton() {
     });
 
     if (error || !data?.url) {
-      setError(error?.message ?? 'Could not initiate sign-in');
+      setError(error?.message ?? tr('auth.signInError', 'Could not initiate sign-in'));
       setLoading(false);
       return;
     }
 
-    // Open Google login in a popup
     const width = 500;
     const height = 600;
     const left = window.screenX + (window.outerWidth - width) / 2;
@@ -37,12 +43,10 @@ export default function GoogleAuthButton() {
     );
 
     if (!popup) {
-      // Popup blocked — fall back to full redirect
       window.location.href = data.url;
       return;
     }
 
-    // Listen for session once popup completes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
         subscription.unsubscribe();
@@ -51,7 +55,6 @@ export default function GoogleAuthButton() {
       }
     });
 
-    // If user closes popup manually without signing in
     const checkClosed = setInterval(() => {
       if (popup.closed) {
         clearInterval(checkClosed);
@@ -75,7 +78,7 @@ export default function GoogleAuthButton() {
           <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
           <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
         </svg>
-        {loading ? 'Signing you in…' : 'Continue with Google'}
+        {loading ? tr('auth.signingIn', 'Signing you in…') : tr('auth.continueGoogle', 'Continue with Google')}
       </button>
 
       {error && (
@@ -84,5 +87,13 @@ export default function GoogleAuthButton() {
         </div>
       )}
     </>
+  );
+}
+
+export default function GoogleAuthButton({ locale }: GoogleAuthButtonProps) {
+  return (
+    <LocaleProvider locale={locale}>
+      <GoogleAuthButtonInner />
+    </LocaleProvider>
   );
 }

@@ -1,14 +1,17 @@
 ---
 import RootLayout from '../layouts/RootLayout.astro';
 import { COUNTRIES, FIFA_TO_ISO } from '../data/album-structure';
+import { getLocaleFromRequest, tr } from '../i18n';
+
+const locale = getLocaleFromRequest(Astro.request, Astro.cookies);
 ---
 
-<RootLayout title="World Cup 2026 Tracker">
+<RootLayout title={tr(locale, 'meta.defaultTitle', 'World Cup 2026 Tracker')}>
   <div class="app">
     <!-- Top bar -->
     <header class="topbar">
       <div class="topbar__left">
-        <a href="/" class="logo" aria-label="Tracker 26 — Home">
+        <a href="/" class="logo" aria-label={tr(locale, 'nav.homeAria', 'Tracker 26 — Home')}>
           <div class="logo__mark">
             <img src="/FiFaTrophy.png" height="32" style="width:auto;display:block;object-fit:contain" alt="" aria-hidden="true" />
           </div>
@@ -18,18 +21,18 @@ import { COUNTRIES, FIFA_TO_ISO } from '../data/album-structure';
         </a>
 
         <nav class="topbar__nav" id="logged-in-nav" style="display:none">
-          <a href="/" class="is-active">Overview</a>
-          <a href="/tracker">Tracker</a>
+          <a href="/" class="is-active">{tr(locale, 'nav.overview', 'Overview')}</a>
+          <a href="/tracker">{tr(locale, 'nav.tracker', 'Tracker')}</a>
         </nav>
       </div>
 
       <div class="topbar__right">
         <div class="user-chip" id="user-chip" style="display:none">
           <span class="user-chip__avatar" id="user-avatar">?</span>
-          <span class="user-chip__name" id="user-name">User</span>
+          <span class="user-chip__name" id="user-name">{tr(locale, 'nav.user', 'User')}</span>
         </div>
-        <button class="btn btn--ghost" id="btn-logout" style="display:none">Sign out</button>
-        <a href="/auth/login" class="btn btn--primary" id="signin-btn">Sign in</a>
+        <button class="btn btn--ghost" id="btn-logout" style="display:none">{tr(locale, 'nav.signOut', 'Sign out')}</button>
+        <a href="/auth/login" class="btn btn--primary" id="signin-btn">{tr(locale, 'nav.signIn', 'Sign in')}</a>
       </div>
     </header>
 
@@ -37,29 +40,27 @@ import { COUNTRIES, FIFA_TO_ISO } from '../data/album-structure';
       <!-- Hero -->
       <section class="home__hero">
         <div class="home__eyebrow-row">
-          <span class="pill">Unofficial · Open-source</span>
-          <span class="pill">Edition 26 · 980 stickers</span>
+          <span class="pill">{tr(locale, 'home.pillUnofficial', 'Unofficial · Open-source')}</span>
+          <span class="pill">{tr(locale, 'home.pillEdition', 'Edition 26 · 980 stickers')}</span>
         </div>
 
         <h1 class="home__headline">
-          Track every <span style="color:var(--accent)">sticker</span>,<br>finish every page.
+          {tr(locale, 'home.headlineBefore', 'Track every ')}<span style="color:var(--accent)">{tr(locale, 'home.headlineHighlight', 'sticker')}</span>,<br />{tr(locale, 'home.headlineAfter', 'finish every page.')}
         </h1>
 
         <p class="home__lede">
-          A clean, fast tracker for your World Cup 2026 sticker album.
-          Mark what you have, see what's missing, and never buy a duplicate again.
-          Designed for collectors, not for ads.
+          {tr(locale, 'home.lede', 'A clean, fast tracker for your World Cup 2026 sticker album. Mark what you have, see what\'s missing, and never buy a duplicate again. Designed for collectors, not for ads.')}
         </p>
 
         <div class="home__cta-row">
           <a href="/tracker" class="btn btn--primary btn--lg" id="cta-open-album" style="display:none">
-            Open your album →
+            {tr(locale, 'home.ctaOpenAlbum', 'Open your album →')}
           </a>
           <a href="/auth/login" class="btn btn--primary btn--lg" id="cta-start-tracking">
-            Start tracking
+            {tr(locale, 'home.ctaStartTracking', 'Start tracking')}
           </a>
           <a href="/tracker" class="btn btn--lg">
-            Browse the album
+            {tr(locale, 'home.ctaBrowseAlbum', 'Browse the album')}
           </a>
         </div>
       </section>
@@ -68,19 +69,19 @@ import { COUNTRIES, FIFA_TO_ISO } from '../data/album-structure';
       <div class="home__stats">
         <div class="home__stat">
           <span class="home__stat-num">980</span>
-          <span class="home__stat-label">Stickers in edition</span>
+          <span class="home__stat-label">{tr(locale, 'home.statStickers', 'Stickers in edition')}</span>
         </div>
         <div class="home__stat">
           <span class="home__stat-num">48</span>
-          <span class="home__stat-label">National teams</span>
+          <span class="home__stat-label">{tr(locale, 'home.statTeams', 'National teams')}</span>
         </div>
         <div class="home__stat">
           <span class="home__stat-num">3</span>
-          <span class="home__stat-label">Host countries</span>
+          <span class="home__stat-label">{tr(locale, 'home.statHosts', 'Host countries')}</span>
         </div>
         <div class="home__stat">
           <span class="home__stat-num" id="stat-progress">24h</span>
-          <span class="home__stat-label" id="stat-progress-label">Free, always</span>
+          <span class="home__stat-label" id="stat-progress-label">{tr(locale, 'home.statFree', 'Free, always')}</span>
         </div>
       </div>
 
@@ -88,26 +89,23 @@ import { COUNTRIES, FIFA_TO_ISO } from '../data/album-structure';
       <section class="home__features">
         <article class="feature">
           <span class="feature__num">01</span>
-          <h3 class="feature__title">Sticker-by-sticker tracking</h3>
+          <h3 class="feature__title">{tr(locale, 'home.feature1Title', 'Sticker-by-sticker tracking')}</h3>
           <p class="feature__body">
-            Tap to mark owned. Filter by country, owned, or missing.
-            Your progress syncs across devices the moment you sign in.
+            {tr(locale, 'home.feature1Body', 'Tap to mark owned. Filter by country, owned, or missing. Your progress syncs across devices the moment you sign in.')}
           </p>
         </article>
         <article class="feature">
           <span class="feature__num">02</span>
-          <h3 class="feature__title">Smart missing list</h3>
+          <h3 class="feature__title">{tr(locale, 'home.feature2Title', 'Smart missing list')}</h3>
           <p class="feature__body">
-            See which teams are closest to complete, sort by gaps,
-            and export a clean shopping list before your next swap meet.
+            {tr(locale, 'home.feature2Body', 'See which teams are closest to complete, sort by gaps, and export a clean shopping list before your next swap meet.')}
           </p>
         </article>
         <article class="feature">
           <span class="feature__num">03</span>
-          <h3 class="feature__title">Open-source API</h3>
+          <h3 class="feature__title">{tr(locale, 'home.feature3Title', 'Open-source API')}</h3>
           <p class="feature__body">
-            Access the complete 980-sticker catalog via our public REST API.
-            Build your own app or integrate with existing tools.
+            {tr(locale, 'home.feature3Body', 'Access the complete 980-sticker catalog via our public REST API. Build your own app or integrate with existing tools.')}
           </p>
         </article>
       </section>
@@ -115,8 +113,8 @@ import { COUNTRIES, FIFA_TO_ISO } from '../data/album-structure';
       <!-- Teams strip -->
       <section class="home__teams">
         <header class="home__teams-head">
-          <h2>All 48 nations</h2>
-          <span class="eyebrow">FIFA World Cup 2026</span>
+          <h2>{tr(locale, 'home.teamsTitle', 'All 48 nations')}</h2>
+          <span class="eyebrow">{tr(locale, 'home.teamsEyebrow', 'FIFA World Cup 2026')}</span>
         </header>
         <div class="home__teams-grid">
           {COUNTRIES.map(c => {
@@ -144,7 +142,7 @@ import { COUNTRIES, FIFA_TO_ISO } from '../data/album-structure';
               )}
               <div style="display:flex;flex-direction:column;gap:2px">
                 <span class="team-pill__name">{c.name}</span>
-                <span class="team-pill__code">{c.code} · {c.region}{c.host ? ' · HOST' : ''}</span>
+                <span class="team-pill__code">{c.code} · {c.region}{c.host ? tr(locale, 'home.hostBadge', ' · HOST') : ''}</span>
               </div>
             </a>
             );
@@ -155,19 +153,19 @@ import { COUNTRIES, FIFA_TO_ISO } from '../data/album-structure';
       <!-- Footer -->
       <footer class="home__footer">
         <p class="home__footer-msg">
-          If this helped you, consider supporting future projects.
+          {tr(locale, 'home.footerMsg', 'If this helped you, consider supporting future projects.')}
         </p>
         <a
           href="https://ko-fi.com/poethy"
           target="_blank"
           rel="noopener noreferrer"
           class="home__footer-kofi"
-          aria-label="Support on Ko-fi"
+          aria-label={tr(locale, 'home.supportKofiAria', 'Support on Ko-fi')}
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
           </svg>
-          Support on Ko-fi
+          {tr(locale, 'home.supportKofi', 'Support on Ko-fi')}
         </a>
         <span class="home__footer-divider">·</span>
         <a
@@ -179,14 +177,14 @@ import { COUNTRIES, FIFA_TO_ISO } from '../data/album-structure';
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/>
           </svg>
-          GitHub
+          {tr(locale, 'home.github', 'GitHub')}
         </a>
       </footer>
     </div>
   </div>
 </RootLayout>
 
-<script>
+<script define:vars={{ statYourProgress: tr(locale, 'home.statYourProgress', 'Your progress') }}>
   import { supabase } from '../utils/supabase';
 
   supabase.auth.getSession().then(({ data: { session } }) => {
@@ -224,7 +222,6 @@ import { COUNTRIES, FIFA_TO_ISO } from '../data/album-structure';
     const ctaOpen = document.getElementById('cta-open-album');
     if (ctaOpen) ctaOpen.style.display = 'inline-flex';
 
-    // Load collection count — direct Supabase call (no server proxy)
     supabase
       .from('user_stickers')
       .select('sticker_id', { count: 'exact', head: true })
@@ -235,7 +232,7 @@ import { COUNTRIES, FIFA_TO_ISO } from '../data/album-structure';
           const el = document.getElementById('stat-progress');
           const lbl = document.getElementById('stat-progress-label');
           if (el) el.textContent = `${pct}%`;
-          if (lbl) lbl.textContent = 'Your progress';
+          if (lbl) lbl.textContent = statYourProgress;
         }
       })
       .catch(() => {});

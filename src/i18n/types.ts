@@ -1,0 +1,134 @@
+export type Locale = 'en' | 'es';
+
+export interface Translations {
+  meta: {
+    defaultTitle: string;
+    description: string;
+    signInTitle: string;
+    trackerTitle: string;
+  };
+  nav: {
+    homeAria: string;
+    overview: string;
+    tracker: string;
+    signIn: string;
+    signOut: string;
+    user: string;
+  };
+  home: {
+    pillUnofficial: string;
+    pillEdition: string;
+    headlineBefore: string;
+    headlineHighlight: string;
+    headlineAfter: string;
+    lede: string;
+    ctaOpenAlbum: string;
+    ctaStartTracking: string;
+    ctaBrowseAlbum: string;
+    statStickers: string;
+    statTeams: string;
+    statHosts: string;
+    statFree: string;
+    statYourProgress: string;
+    feature1Title: string;
+    feature1Body: string;
+    feature2Title: string;
+    feature2Body: string;
+    feature3Title: string;
+    feature3Body: string;
+    teamsTitle: string;
+    teamsEyebrow: string;
+    hostBadge: string;
+    footerMsg: string;
+    supportKofi: string;
+    supportKofiAria: string;
+    github: string;
+  };
+  auth: {
+    kickOff: string;
+    album: string;
+    hosts: string;
+    signInEyebrow: string;
+    welcomeTitle: string;
+    welcomeSubtitle: string;
+    protectedSignIn: string;
+    fineprint: string;
+    backHome: string;
+    continueGoogle: string;
+    signingIn: string;
+    signInError: string;
+  };
+  tracker: {
+    loading: string;
+    yourProgress: string;
+    owned: string;
+    toGo: string;
+    missing: string;
+    specials: string;
+    specialsDesc: string;
+    topMissingTeams: string;
+    jumpTo: string;
+    allSections: string;
+    cover: string;
+    tournament: string;
+    hostNations: string;
+    teams: string;
+    live: string;
+    showing: string;
+    of: string;
+    searchPlaceholder: string;
+    filterAll: string;
+    filterOwned: string;
+    filterMissing: string;
+    reset: string;
+    emptyFilters: string;
+  };
+  modal: {
+    close: string;
+    closeAria: string;
+    status: string;
+    inCollection: string;
+    missing: string;
+    section: string;
+    stickerNumber: string;
+    type: string;
+    variant: string;
+    special: string;
+    page: string;
+    removeFromCollection: string;
+    markAsOwned: string;
+    note: string;
+    coverEdition: string;
+    tournamentEmblem: string;
+    tournamentMascot: string;
+    tournamentSlogan: string;
+    tournamentBall: string;
+    tournamentTrophy: string;
+    hostNation: string;
+    teamPhoto: string;
+    player: string;
+    sticker: string;
+    playerPhoto: string;
+    teamPhotoArt: string;
+    hostEmblem: string;
+    mascotArt: string;
+    emblemArt: string;
+    trophyArt: string;
+    matchBall: string;
+    sloganArt: string;
+    coverArt: string;
+    dropHint: string;
+    hostSuffix: string;
+  };
+  sticker: {
+    owned: string;
+    missing: string;
+    toggleAria: string;
+    details: string;
+    detailsAria: string;
+  };
+}
+
+export type TranslationKey = {
+  [K in keyof Translations]: `${K}.${keyof Translations[K] & string}`;
+}[keyof Translations];

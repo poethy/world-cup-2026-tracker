@@ -5,24 +5,29 @@ import {
   COUNTRIES,
   COUNTRY_BY_CODE,
   SECTION_ORDER,
-  SECTION_LABELS,
   getStickerSectionKey,
 } from '../data/album-structure';
 import StickerCard from './StickerCard';
 import StickerDetailModal from './StickerDetailModal';
 import FlagBlock from './FlagBlock';
+import { LocaleProvider, useI18n } from './LocaleProvider';
+import type { Locale } from '../i18n';
 
 type OwnedMap = Record<number, boolean>;
 
 const TOTAL_STICKERS = 980;
 
-// Build a quick section-key lookup for each sticker
 const STICKER_SECTIONS: Record<number, string> = {};
 for (const s of STICKERS) {
   STICKER_SECTIONS[s.number] = getStickerSectionKey(s.countryCode, s.number);
 }
 
-export default function TrackerApp() {
+interface TrackerAppProps {
+  locale: Locale;
+}
+
+function TrackerAppInner() {
+  const { tr, getSectionLabel } = useI18n();
   const [owned, setOwned] = useState<OwnedMap>({});
   const [loadingCollection, setLoadingCollection] = useState(true);
   const [query, setQuery] = useState('');
@@ -199,10 +204,20 @@ export default function TrackerApp() {
     ? STICKERS.find(s => s.number === detailNumber) ?? null
     : null;
 
+  const filterLabels = useMemo(() => ({
+    all: tr('tracker.filterAll', 'All'),
+    owned: tr('tracker.filterOwned', 'Owned'),
+    missing: tr('tracker.filterMissing', 'Missing'),
+  }), [tr]);
+
+  const activeSectionLabel = countryFilter === 'all'
+    ? tr('tracker.allSections', 'All sections')
+    : getSectionLabel(countryFilter);
+
   if (loadingCollection) {
     return (
       <div className="loading-state mono">
-        Loading your collection…
+        {tr('tracker.loading', 'Loading your collection…')}
       </div>
     );
   }
@@ -213,7 +228,7 @@ export default function TrackerApp() {
       <aside className="tracker__sidebar">
         {/* Progress */}
         <div className="sb-section">
-          <p className="sb-eyebrow">Your progress</p>
+          <p className="sb-eyebrow">{tr('tracker.yourProgress', 'Your progress')}</p>
           <div className="progress-headline">
             <span className="progress-headline__num">{stats.owned}</span>
             <span className="progress-headline__total">/ {stats.total}</span>
@@ -223,26 +238,26 @@ export default function TrackerApp() {
             <div className="progress-bar__fill" style={{ width: `${stats.pct}%` }} />
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.08em' }}>
-            <span>{stats.owned} OWNED</span>
-            <span>{stats.missing} TO GO</span>
+            <span>{stats.owned} {tr('tracker.owned', 'Owned').toUpperCase()}</span>
+            <span>{stats.missing} {tr('tracker.toGo', 'TO GO')}</span>
           </div>
           <div className="stat-tiles" style={{ marginTop: 14 }}>
             <div className="stat-tile stat-tile--ok">
               <span className="stat-tile__val">{stats.owned}</span>
-              <span className="stat-tile__lbl">Owned</span>
+              <span className="stat-tile__lbl">{tr('tracker.owned', 'Owned')}</span>
             </div>
             <div className="stat-tile stat-tile--miss">
               <span className="stat-tile__val">{stats.missing}</span>
-              <span className="stat-tile__lbl">Missing</span>
+              <span className="stat-tile__lbl">{tr('tracker.missing', 'Missing')}</span>
             </div>
           </div>
         </div>
 
         {/* Specials */}
         <div className="sb-section">
-          <p className="sb-eyebrow">Specials · {stats.ownedSpecial}/{stats.totalSpecial}</p>
+          <p className="sb-eyebrow">{tr('tracker.specials', 'Specials')} · {stats.ownedSpecial}/{stats.totalSpecial}</p>
           <p style={{ fontSize: 13, color: 'var(--ink-2)', lineHeight: 1.55, margin: '0 0 10px' }}>
-            Tournament, host nations & cover stickers.
+            {tr('tracker.specialsDesc', 'Tournament, host nations & cover stickers.')}
           </p>
           <div className="progress-bar">
             <div className="progress-bar__fill" style={{ width: `${stats.totalSpecial > 0 ? Math.round((stats.ownedSpecial / stats.totalSpecial) * 100) : 0}%` }} />
@@ -251,7 +266,7 @@ export default function TrackerApp() {
 
         {/* Top missing */}
         <div className="sb-section">
-          <p className="sb-eyebrow">Top missing teams</p>
+          <p className="sb-eyebrow">{tr('tracker.topMissingTeams', 'Top missing teams')}</p>
           <div className="top-missing">
             {stats.topMissing.map(row => {
               const c = COUNTRY_BY_CODE[row.code];
@@ -276,17 +291,17 @@ export default function TrackerApp() {
 
         {/* Jump to */}
         <div className="sb-section">
-          <p className="sb-eyebrow">Jump to</p>
+          <p className="sb-eyebrow">{tr('tracker.jumpTo', 'Jump to')}</p>
           <select
             className="select"
             value={countryFilter}
             onChange={e => setCountryFilter(e.target.value)}
           >
-            <option value="all">All sections</option>
-            <option value="COVER">Cover</option>
-            <option value="TRN">Tournament</option>
-            <option value="HOST">Host Nations</option>
-            <optgroup label="Teams">
+            <option value="all">{tr('tracker.allSections', 'All sections')}</option>
+            <option value="COVER">{tr('tracker.cover', 'Cover')}</option>
+            <option value="TRN">{tr('tracker.tournament', 'Tournament')}</option>
+            <option value="HOST">{tr('tracker.hostNations', 'Host Nations')}</option>
+            <optgroup label={tr('tracker.teams', 'Teams')}>
               {COUNTRIES.map(c => (
                 <option key={c.code} value={c.code}>{c.name} ({c.code})</option>
               ))}
@@ -319,7 +334,7 @@ export default function TrackerApp() {
                       tabIndex={isDupe ? -1 : undefined}
                     >
                       <span className="dot" />
-                      <span>{SECTION_LABELS[key] || key}</span>
+                      <span>{getSectionLabel(key)}</span>
                       <span style={{ opacity: 0.5 }}>{ownedInSection}/{items.length}</span>
                     </button>
                   );
@@ -332,18 +347,16 @@ export default function TrackerApp() {
         {/* Filter bar */}
         <div className="filterbar">
           <div className="filterbar__strip">
-            <span className="filterbar__strip-label">Live</span>
+            <span className="filterbar__strip-label">{tr('tracker.live', 'Live')}</span>
             <span className="filterbar__strip-stat">
-              Showing <b>{filtered.length}</b> of <b>{TOTAL_STICKERS}</b>
+              {tr('tracker.showing', 'Showing')} <b>{filtered.length}</b> {tr('tracker.of', 'of')} <b>{TOTAL_STICKERS}</b>
             </span>
             <span className="filterbar__strip-stat">
-              Owned <b>{stats.owned}</b> · Missing <b>{stats.missing}</b>
+              {tr('tracker.owned', 'Owned')} <b>{stats.owned}</b> · {tr('tracker.missing', 'Missing')} <b>{stats.missing}</b>
             </span>
             <span className="filterbar__strip-spacer" />
             <span className="filterbar__strip-stat">
-              {countryFilter === 'all'
-                ? 'All sections'
-                : (SECTION_LABELS[countryFilter] || countryFilter)} · {filter.toUpperCase()}
+              {activeSectionLabel} · {filterLabels[filter].toUpperCase()}
             </span>
           </div>
 
@@ -356,7 +369,7 @@ export default function TrackerApp() {
                 ref={searchRef}
                 className="input"
                 type="search"
-                placeholder="Search player, team or section…"
+                placeholder={tr('tracker.searchPlaceholder', 'Search player, team or section…')}
                 value={query}
                 onChange={e => setQuery(e.target.value)}
               />
@@ -368,11 +381,11 @@ export default function TrackerApp() {
               value={countryFilter}
               onChange={e => setCountryFilter(e.target.value)}
             >
-              <option value="all">All sections</option>
-              <option value="COVER">Cover</option>
-              <option value="TRN">Tournament</option>
-              <option value="HOST">Host Nations</option>
-              <optgroup label="Teams">
+              <option value="all">{tr('tracker.allSections', 'All sections')}</option>
+              <option value="COVER">{tr('tracker.cover', 'Cover')}</option>
+              <option value="TRN">{tr('tracker.tournament', 'Tournament')}</option>
+              <option value="HOST">{tr('tracker.hostNations', 'Host Nations')}</option>
+              <optgroup label={tr('tracker.teams', 'Teams')}>
                 {COUNTRIES.map(c => (
                   <option key={c.code} value={c.code}>{c.name} ({c.code})</option>
                 ))}
@@ -388,13 +401,13 @@ export default function TrackerApp() {
                   role="tab"
                   aria-selected={filter === k}
                 >
-                  {k.charAt(0).toUpperCase() + k.slice(1)}
+                  {filterLabels[k]}
                 </button>
               ))}
             </div>
 
             {(query || filter !== 'all' || countryFilter !== 'all') && (
-              <button className="btn btn--ghost" onClick={handleReset}>Reset</button>
+              <button className="btn btn--ghost" onClick={handleReset}>{tr('tracker.reset', 'Reset')}</button>
             )}
           </div>
         </div>
@@ -402,9 +415,9 @@ export default function TrackerApp() {
         {/* Sticker sections */}
         {grouped.length === 0 && (
           <div className="empty">
-            No stickers match your filters.{' '}
+            {tr('tracker.emptyFilters', 'No stickers match your filters.')}{' '}
             <button className="btn btn--ghost" onClick={handleReset} style={{ display: 'inline-flex', padding: '4px 10px' }}>
-              Reset
+              {tr('tracker.reset', 'Reset')}
             </button>
           </div>
         )}
@@ -417,7 +430,7 @@ export default function TrackerApp() {
               <header className="section__head">
                 <h2 className="section__title">
                   {countryData && <FlagBlock country={countryData} size="md" />}
-                  {SECTION_LABELS[sectionKey] || sectionKey}
+                  {getSectionLabel(sectionKey)}
                 </h2>
                 <span className="section__code">{sectionKey}</span>
                 <span className="section__progress">
@@ -454,5 +467,13 @@ export default function TrackerApp() {
         />
       )}
     </div>
+  );
+}
+
+export default function TrackerApp({ locale }: TrackerAppProps) {
+  return (
+    <LocaleProvider locale={locale}>
+      <TrackerAppInner />
+    </LocaleProvider>
   );
 }

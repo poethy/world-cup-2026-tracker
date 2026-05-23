@@ -1,18 +1,20 @@
 ---
 import RootLayout from './RootLayout.astro';
+import { getLocaleFromRequest, tr } from '../i18n';
 
 interface Props {
   title?: string;
 }
 
-const { title } = Astro.props;
+const locale = getLocaleFromRequest(Astro.request, Astro.cookies);
+const { title = tr(locale, 'meta.trackerTitle', 'Tracker - World Cup 2026') } = Astro.props;
 ---
 
 <RootLayout title={title}>
   <div class="app">
     <header class="topbar">
       <div class="topbar__left">
-        <a href="/" class="logo" aria-label="Tracker 26 — Home">
+        <a href="/" class="logo" aria-label={tr(locale, 'nav.homeAria', 'Tracker 26 — Home')}>
           <div class="logo__mark">
             <img src="/FiFaTrophy.png" height="32" style="width:auto;display:block;object-fit:contain" alt="" aria-hidden="true" />
           </div>
@@ -22,17 +24,17 @@ const { title } = Astro.props;
         </a>
 
         <nav class="topbar__nav">
-          <a href="/" id="nav-home">Overview</a>
-          <a href="/tracker" id="nav-tracker" class="is-active">Tracker</a>
+          <a href="/" id="nav-home">{tr(locale, 'nav.overview', 'Overview')}</a>
+          <a href="/tracker" id="nav-tracker" class="is-active">{tr(locale, 'nav.tracker', 'Tracker')}</a>
         </nav>
       </div>
 
       <div class="topbar__right">
         <div class="user-chip" id="user-chip" style="display:none">
           <span class="user-chip__avatar" id="user-avatar">?</span>
-          <span class="user-chip__name" id="user-name">User</span>
+          <span class="user-chip__name" id="user-name">{tr(locale, 'nav.user', 'User')}</span>
         </div>
-        <button class="btn btn--ghost" id="btn-logout" style="display:none">Sign out</button>
+        <button class="btn btn--ghost" id="btn-logout" style="display:none">{tr(locale, 'nav.signOut', 'Sign out')}</button>
       </div>
     </header>
 

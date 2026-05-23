@@ -3,20 +3,22 @@ import '../styles/globals.css';
 import 'flag-icons/css/flag-icons.min.css';
 import Analytics from '@vercel/analytics/astro';
 import SpeedInsights from '@vercel/speed-insights/astro';
+import { getLocaleFromRequest, tr } from '../i18n';
 
 interface Props {
   title?: string;
 }
 
-const { title = 'World Cup 2026 Tracker' } = Astro.props;
+const locale = getLocaleFromRequest(Astro.request, Astro.cookies);
+const { title = tr(locale, 'meta.defaultTitle', 'World Cup 2026 Tracker') } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={locale}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Track your FIFA World Cup 2026 Panini sticker album" />
+    <meta name="description" content={tr(locale, 'meta.description', 'Track your FIFA World Cup 2026 Panini sticker album')} />
     <title>{title}</title>
     <link rel="icon" type="image/png" href="/FiFaTrophy.png" />
     <!-- Google Fonts: Space Grotesk (display) + Inter (body) + JetBrains Mono -->

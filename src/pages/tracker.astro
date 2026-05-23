@@ -1,8 +1,11 @@
 ---
 import AppLayout from '../layouts/AppLayout.astro';
 import TrackerApp from '../components/TrackerApp';
+import { getLocaleFromRequest } from '../i18n';
+
+const locale = getLocaleFromRequest(Astro.request, Astro.cookies);
 ---
 
-<AppLayout title="Tracker - World Cup 2026">
-  <TrackerApp client:only="react" />
+<AppLayout>
+  <TrackerApp client:only="react" locale={locale} />
 </AppLayout>

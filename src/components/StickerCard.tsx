@@ -1,9 +1,10 @@
 import React from 'react';
-import { COUNTRY_BY_CODE, SECTION_LABELS } from '../data/album-structure';
+import { COUNTRY_BY_CODE } from '../data/album-structure';
 import type { Country } from '../data/album-structure';
 import { getStickerDisplayCode } from '../data/stickers';
 import PLAYER_IMAGES from '../data/player-images.json';
 import FlagBlock from './FlagBlock';
+import { useI18n } from './LocaleProvider';
 
 interface StickerCardProps {
   number: number;
@@ -26,6 +27,7 @@ export default function StickerCard({
   onToggle,
   onOpenDetail,
 }: StickerCardProps) {
+  const { tr, getSectionLabel } = useI18n();
   const isSpecial = sectionType === 'special';
   const countryData: Country | undefined = COUNTRY_BY_CODE[countryCode];
   const displayCode = getStickerDisplayCode(countryCode, number);
@@ -49,7 +51,8 @@ export default function StickerCard({
     onOpenDetail(number);
   };
 
-  const sectionLabel = countryData?.name || SECTION_LABELS[countryCode] || country;
+  const sectionLabel = countryData?.name || getSectionLabel(countryCode) || country;
+  const statusLabel = owned ? tr('sticker.owned', 'owned') : tr('sticker.missing', 'missing');
 
   return (
     <div className={cls} data-sticker-id={number}>
@@ -58,7 +61,7 @@ export default function StickerCard({
         className="sticker__main"
         onClick={() => onToggle(number, !owned)}
         aria-pressed={owned}
-        aria-label={`Sticker #${number} ${name} — ${owned ? 'owned' : 'missing'}, click to toggle`}
+        aria-label={tr('sticker.toggleAria', 'Sticker #{number} {name} — {status}, click to toggle', { number, name, status: statusLabel })}
       >
         <div className="sticker__art">
           <div className="sticker__art-top">
@@ -118,8 +121,8 @@ export default function StickerCard({
         type="button"
         className="sticker__info-btn"
         onClick={handleInfoClick}
-        aria-label={`Open details for sticker #${number}`}
-        title="Details"
+        aria-label={tr('sticker.detailsAria', 'Open details for sticker #{number}', { number })}
+        title={tr('sticker.details', 'Details')}
       >?</button>
     </div>
   );
