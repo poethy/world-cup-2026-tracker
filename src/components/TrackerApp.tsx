@@ -61,7 +61,11 @@ export default function TrackerApp() {
   // Load sticker catalog from DB
   useEffect(() => {
     async function loadStickers() {
-      const { data } = await supabase.from('stickers').select('*').order('number', { ascending: true }).range(0, 1999);
+      const [res1, res2] = await Promise.all([
+        supabase.from('stickers').select('*').order('number', { ascending: true }).range(0, 999),
+        supabase.from('stickers').select('*').order('number', { ascending: true }).range(1000, 1999),
+      ]);
+      const data = [...(res1.data ?? []), ...(res2.data ?? [])];
       const counters: Record<string, number> = {};
       const loaded = (data ?? []).map((row: any) => {
         const countryCode: string = row.country_code;
