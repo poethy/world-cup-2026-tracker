@@ -11,10 +11,10 @@ import {
 import StickerCard from './StickerCard';
 import StickerDetailModal from './StickerDetailModal';
 import FlagBlock from './FlagBlock';
+import AlbumVersionPicker from './AlbumVersionPicker';
+import type { AlbumVersion } from './AlbumVersionPicker';
 
 type OwnedMap = Record<number, boolean>;
-
-const TOTAL_STICKERS = 980;
 
 // Build a quick section-key lookup for each sticker
 const STICKER_SECTIONS: Record<number, string> = {};
@@ -22,9 +22,14 @@ for (const s of STICKERS) {
   STICKER_SECTIONS[s.number] = getStickerSectionKey(s.countryCode, s.number);
 }
 
+// CC sticker counts per version
+const CC_COUNTS: Record<string, number> = { v1: 12, v2: 14, v3: 12, v4: 14 };
+
 export default function TrackerApp() {
   const [owned, setOwned] = useState<OwnedMap>({});
   const [loadingCollection, setLoadingCollection] = useState(true);
+  const [albumVersion, setAlbumVersion] = useState<AlbumVersion | null>(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<'all' | 'owned' | 'missing'>('all');
   const [countryFilter, setCountryFilter] = useState('all');
@@ -69,6 +74,22 @@ export default function TrackerApp() {
     loadCollection();
   }, []);
 
+  // Load album version from user_profiles (runs in parallel with loadCollection)
+  useEffect(() => {
+    async function loadProfile() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { setLoadingProfile(false); return; }
+      const { data } = await supabase
+        .from('user_profiles')
+        .select('album_version')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+      setAlbumVersion((data?.album_version as AlbumVersion) ?? null);
+      setLoadingProfile(false);
+    }
+    loadProfile();
+  }, []);
+
   // Handle section from URL ?section=XXX
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -111,11 +132,13 @@ export default function TrackerApp() {
 
   // ----- Stats -----
   const stats = useMemo(() => {
-    const total = TOTAL_STICKERS;
+    const total = 980 + (albumVersion ? (CC_COUNTS[albumVersion] ?? 0) : 0);
     let ownedCount = 0, ownedSpecial = 0, totalSpecial = 0;
     const byCountry: Record<string, { total: number; owned: number }> = {};
 
     for (const s of STICKERS) {
+      // Skip CC stickers that don't belong to this version
+      if (s.ccVersion && s.ccVersion !== albumVersion) continue;
       const isSpecial = s.sectionType === 'special';
       if (isSpecial) totalSpecial++;
       const isOwned = !!owned[s.number];
@@ -142,12 +165,16 @@ export default function TrackerApp() {
       pct: Math.round((ownedCount / total) * 100),
       topMissing,
     };
-  }, [owned]);
+  }, [owned, albumVersion]);
 
   // ----- Filtered & Grouped -----
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return STICKERS.filter(s => {
+      // Only show CC stickers matching the user's album version
+      if (s.ccVersion) {
+        if (!albumVersion || s.ccVersion !== albumVersion) return false;
+      }
       if (filter === 'owned' && !owned[s.number]) return false;
       if (filter === 'missing' && owned[s.number]) return false;
       if (countryFilter !== 'all') {
@@ -156,12 +183,12 @@ export default function TrackerApp() {
       }
       if (q) {
         const cc = COUNTRY_BY_CODE[s.countryCode];
-        const hay = `${s.name} ${s.countryCode} ${s.country} ${cc?.name ?? ''} ${cc?.region ?? ''}`.toLowerCase();
+        const hay = `${s.name} ${s.countryCode} ${s.country} ${cc?.name ?? ''} ${cc?.region ?? ''} coca-cola`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
-  }, [owned, filter, countryFilter, query]);
+  }, [owned, filter, countryFilter, query, albumVersion]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, typeof STICKERS>();
@@ -199,12 +226,16 @@ export default function TrackerApp() {
     ? STICKERS.find(s => s.number === detailNumber) ?? null
     : null;
 
-  if (loadingCollection) {
+  if (loadingCollection || loadingProfile) {
     return (
       <div className="loading-state mono">
         Loading your collection…
       </div>
     );
+  }
+
+  if (!albumVersion) {
+    return <AlbumVersionPicker onSelect={setAlbumVersion} />;
   }
 
   return (
@@ -286,6 +317,7 @@ export default function TrackerApp() {
             <option value="COVER">Cover</option>
             <option value="TRN">Tournament</option>
             <option value="HOST">Host Nations</option>
+            <option value="CC">Coca-Cola</option>
             <optgroup label="Teams">
               {COUNTRIES.map(c => (
                 <option key={c.code} value={c.code}>{c.name} ({c.code})</option>
@@ -307,7 +339,11 @@ export default function TrackerApp() {
                 aria-hidden={isDupe ? true : undefined}
               >
                 {SECTION_ORDER.map(key => {
-                  const items = STICKERS.filter(s => STICKER_SECTIONS[s.number] === key);
+                  const items = STICKERS.filter(s => {
+                    if (STICKER_SECTIONS[s.number] !== key) return false;
+                    if (s.ccVersion && s.ccVersion !== albumVersion) return false;
+                    return true;
+                  });
                   if (!items.length) return null;
                   const ownedInSection = items.filter(s => owned[s.number]).length;
                   const isActive = countryFilter === key;
@@ -334,7 +370,7 @@ export default function TrackerApp() {
           <div className="filterbar__strip">
             <span className="filterbar__strip-label">Live</span>
             <span className="filterbar__strip-stat">
-              Showing <b>{filtered.length}</b> of <b>{TOTAL_STICKERS}</b>
+              Showing <b>{filtered.length}</b> of <b>{stats.total}</b>
             </span>
             <span className="filterbar__strip-stat">
               Owned <b>{stats.owned}</b> · Missing <b>{stats.missing}</b>

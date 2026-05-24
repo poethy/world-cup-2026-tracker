@@ -61,6 +61,26 @@ CREATE POLICY "Users can update own stickers" ON user_stickers
 CREATE POLICY "Users can delete own stickers" ON user_stickers
   FOR DELETE USING (auth.uid() = user_id);
 
+-- ===== USER_PROFILES TABLE =====
+-- Stores per-user preferences (album version, etc.)
+-- Run this separately if the table doesn't exist yet:
+CREATE TABLE IF NOT EXISTS user_profiles (
+  user_id      UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  album_version TEXT CHECK (album_version IN ('v1', 'v2', 'v3', 'v4')),
+  created_at   TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can read own profile" ON user_profiles
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own profile" ON user_profiles
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own profile" ON user_profiles
+  FOR UPDATE USING (auth.uid() = user_id);
+
 -- ===== UPDATED_AT TRIGGER =====
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$

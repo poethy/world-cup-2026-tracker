@@ -48,6 +48,8 @@ export interface Sticker {
   positionInPage: number;
   imageUrl?: string;
   createdAt?: string;
+  /** Only present on coca-cola stickers — identifies which regional version */
+  ccVersion?: 'v1' | 'v2' | 'v3' | 'v4';
 }
 
 export interface UserCollection {
@@ -158,7 +160,7 @@ export const FIFA_TO_ISO: Record<string, string> = {
 
 // Section order for the tracker
 export const SECTION_ORDER = [
-  'COVER', 'TRN', 'HOST',
+  'COVER', 'TRN', 'HOST', 'CC',
   ...COUNTRIES.map(c => c.code),
 ];
 
@@ -167,12 +169,14 @@ export const SECTION_LABELS: Record<string, string> = {
   COVER: 'Cover',
   TRN: 'Tournament',
   HOST: 'Host Nations',
+  CC: 'Coca-Cola',
   ...Object.fromEntries(COUNTRIES.map(c => [c.code, c.name])),
 };
 
 // Derive sticker section key from existing data
 export function getStickerSectionKey(countryCode: string, number: number): string {
   if (countryCode === 'WP') return 'COVER';
+  if (countryCode === 'CC') return 'CC';
   if (countryCode === 'FWC') {
     if (number <= 6) return 'TRN';
     return 'HOST';

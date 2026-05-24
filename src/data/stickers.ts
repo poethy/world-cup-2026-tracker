@@ -980,7 +980,68 @@ export const STICKERS: Omit<Sticker, 'id' | 'imageUrl' | 'createdAt'>[] = [
   { number: 977, name: "Team Photo", country: "Brazil 2002", countryCode: "FWC", pageNumber: 106, positionInPage: 1, sectionType: "special" },
   { number: 978, name: "Team Photo", country: "Italy 2006", countryCode: "FWC", pageNumber: 107, positionInPage: 1, sectionType: "special" },
   { number: 979, name: "Team Photo", country: "Germany 2014", countryCode: "FWC", pageNumber: 108, positionInPage: 1, sectionType: "special" },
-  { number: 980, name: "Team Photo", country: "Argentina 2022", countryCode: "FWC", pageNumber: 109, positionInPage: 1, sectionType: "special" }
+  { number: 980, name: "Team Photo", country: "Argentina 2022", countryCode: "FWC", pageNumber: 109, positionInPage: 1, sectionType: "special" },
+
+  // ── COCA-COLA STICKERS ────────────────────────────────────────────────────
+  // Version 1 — Canada & United States (12 stickers, numbers 981-992)
+  { number: 981,  name: "Lamine Yamal",      country: "Spain",        countryCode: "CC", pageNumber: 0, positionInPage: 1,  sectionType: "coca-cola", ccVersion: "v1" },
+  { number: 982,  name: "Joshua Kimmich",    country: "Germany",      countryCode: "CC", pageNumber: 0, positionInPage: 2,  sectionType: "coca-cola", ccVersion: "v1" },
+  { number: 983,  name: "Harry Kane",        country: "England",      countryCode: "CC", pageNumber: 0, positionInPage: 3,  sectionType: "coca-cola", ccVersion: "v1" },
+  { number: 984,  name: "Santiago Giménez",  country: "Mexico",       countryCode: "CC", pageNumber: 0, positionInPage: 4,  sectionType: "coca-cola", ccVersion: "v1" },
+  { number: 985,  name: "Antonee Robinson",  country: "United States",countryCode: "CC", pageNumber: 0, positionInPage: 5,  sectionType: "coca-cola", ccVersion: "v1" },
+  { number: 986,  name: "Jefferson Lerma",   country: "Colombia",     countryCode: "CC", pageNumber: 0, positionInPage: 6,  sectionType: "coca-cola", ccVersion: "v1" },
+  { number: 987,  name: "Edson Álvarez",     country: "Mexico",       countryCode: "CC", pageNumber: 0, positionInPage: 7,  sectionType: "coca-cola", ccVersion: "v1" },
+  { number: 988,  name: "Virgil van Dijk",   country: "Netherlands",  countryCode: "CC", pageNumber: 0, positionInPage: 8,  sectionType: "coca-cola", ccVersion: "v1" },
+  { number: 989,  name: "Alphonso Davies",   country: "Canada",       countryCode: "CC", pageNumber: 0, positionInPage: 9,  sectionType: "coca-cola", ccVersion: "v1" },
+  { number: 990,  name: "Weston McKennie",   country: "United States",countryCode: "CC", pageNumber: 0, positionInPage: 10, sectionType: "coca-cola", ccVersion: "v1" },
+  { number: 991,  name: "Lautaro Martínez",  country: "Argentina",    countryCode: "CC", pageNumber: 0, positionInPage: 11, sectionType: "coca-cola", ccVersion: "v1" },
+  { number: 992,  name: "Gabriel Magalhães", country: "Brazil",       countryCode: "CC", pageNumber: 0, positionInPage: 12, sectionType: "coca-cola", ccVersion: "v1" },
+
+  // Version 2 — Latin America (14 stickers, numbers 993-1006)
+  { number: 993,  name: "Lamine Yamal",      country: "Spain",        countryCode: "CC", pageNumber: 0, positionInPage: 1,  sectionType: "coca-cola", ccVersion: "v2" },
+  { number: 994,  name: "Joshua Kimmich",    country: "Germany",      countryCode: "CC", pageNumber: 0, positionInPage: 2,  sectionType: "coca-cola", ccVersion: "v2" },
+  { number: 995,  name: "Harry Kane",        country: "England",      countryCode: "CC", pageNumber: 0, positionInPage: 3,  sectionType: "coca-cola", ccVersion: "v2" },
+  { number: 996,  name: "Santiago Giménez",  country: "Mexico",       countryCode: "CC", pageNumber: 0, positionInPage: 4,  sectionType: "coca-cola", ccVersion: "v2" },
+  { number: 997,  name: "Josko Gvardiol",    country: "Croatia",      countryCode: "CC", pageNumber: 0, positionInPage: 5,  sectionType: "coca-cola", ccVersion: "v2" },
+  { number: 998,  name: "Federico Valverde", country: "Uruguay",      countryCode: "CC", pageNumber: 0, positionInPage: 6,  sectionType: "coca-cola", ccVersion: "v2" },
+  { number: 999,  name: "Jefferson Lerma",   country: "Colombia",     countryCode: "CC", pageNumber: 0, positionInPage: 7,  sectionType: "coca-cola", ccVersion: "v2" },
+  { number: 1000, name: "Enner Valencia",    country: "Ecuador",      countryCode: "CC", pageNumber: 0, positionInPage: 8,  sectionType: "coca-cola", ccVersion: "v2" },
+  { number: 1001, name: "Gabriel Magalhães", country: "Brazil",       countryCode: "CC", pageNumber: 0, positionInPage: 9,  sectionType: "coca-cola", ccVersion: "v2" },
+  { number: 1002, name: "Virgil van Dijk",   country: "Netherlands",  countryCode: "CC", pageNumber: 0, positionInPage: 10, sectionType: "coca-cola", ccVersion: "v2" },
+  { number: 1003, name: "Alphonso Davies",   country: "Canada",       countryCode: "CC", pageNumber: 0, positionInPage: 11, sectionType: "coca-cola", ccVersion: "v2" },
+  { number: 1004, name: "Emiliano Martínez", country: "Argentina",    countryCode: "CC", pageNumber: 0, positionInPage: 12, sectionType: "coca-cola", ccVersion: "v2" },
+  { number: 1005, name: "Raúl Jiménez",      country: "Mexico",       countryCode: "CC", pageNumber: 0, positionInPage: 13, sectionType: "coca-cola", ccVersion: "v2" },
+  { number: 1006, name: "Lautaro Martínez",  country: "Argentina",    countryCode: "CC", pageNumber: 0, positionInPage: 14, sectionType: "coca-cola", ccVersion: "v2" },
+
+  // Version 3 — Europe (12 stickers, numbers 1007-1018)
+  { number: 1007, name: "Lamine Yamal",       country: "Spain",       countryCode: "CC", pageNumber: 0, positionInPage: 1,  sectionType: "coca-cola", ccVersion: "v3" },
+  { number: 1008, name: "Joshua Kimmich",     country: "Germany",     countryCode: "CC", pageNumber: 0, positionInPage: 2,  sectionType: "coca-cola", ccVersion: "v3" },
+  { number: 1009, name: "Eduardo Camavinga",  country: "France",      countryCode: "CC", pageNumber: 0, positionInPage: 3,  sectionType: "coca-cola", ccVersion: "v3" },
+  { number: 1010, name: "Josko Gvardiol",     country: "Croatia",     countryCode: "CC", pageNumber: 0, positionInPage: 4,  sectionType: "coca-cola", ccVersion: "v3" },
+  { number: 1011, name: "Federico Valverde",  country: "Uruguay",     countryCode: "CC", pageNumber: 0, positionInPage: 5,  sectionType: "coca-cola", ccVersion: "v3" },
+  { number: 1012, name: "Virgil van Dijk",    country: "Netherlands", countryCode: "CC", pageNumber: 0, positionInPage: 6,  sectionType: "coca-cola", ccVersion: "v3" },
+  { number: 1013, name: "Alphonso Davies",    country: "Canada",      countryCode: "CC", pageNumber: 0, positionInPage: 7,  sectionType: "coca-cola", ccVersion: "v3" },
+  { number: 1014, name: "Raúl Jiménez",       country: "Mexico",      countryCode: "CC", pageNumber: 0, positionInPage: 8,  sectionType: "coca-cola", ccVersion: "v3" },
+  { number: 1015, name: "William Saliba",     country: "France",      countryCode: "CC", pageNumber: 0, positionInPage: 9,  sectionType: "coca-cola", ccVersion: "v3" },
+  { number: 1016, name: "Lautaro Martínez",   country: "Argentina",   countryCode: "CC", pageNumber: 0, positionInPage: 10, sectionType: "coca-cola", ccVersion: "v3" },
+  { number: 1017, name: "Harry Kane",         country: "England",     countryCode: "CC", pageNumber: 0, positionInPage: 11, sectionType: "coca-cola", ccVersion: "v3" },
+  { number: 1018, name: "Antonee Robinson",   country: "United States",countryCode: "CC", pageNumber: 0, positionInPage: 12, sectionType: "coca-cola", ccVersion: "v3" },
+
+  // Version 4 — Rest of the World (14 stickers, numbers 1019-1032)
+  { number: 1019, name: "Lamine Yamal",       country: "Spain",        countryCode: "CC", pageNumber: 0, positionInPage: 1,  sectionType: "coca-cola", ccVersion: "v4" },
+  { number: 1020, name: "Joshua Kimmich",     country: "Germany",      countryCode: "CC", pageNumber: 0, positionInPage: 2,  sectionType: "coca-cola", ccVersion: "v4" },
+  { number: 1021, name: "Harry Kane",         country: "England",      countryCode: "CC", pageNumber: 0, positionInPage: 3,  sectionType: "coca-cola", ccVersion: "v4" },
+  { number: 1022, name: "Edson Álvarez",      country: "Mexico",       countryCode: "CC", pageNumber: 0, positionInPage: 4,  sectionType: "coca-cola", ccVersion: "v4" },
+  { number: 1023, name: "Josko Gvardiol",     country: "Croatia",      countryCode: "CC", pageNumber: 0, positionInPage: 5,  sectionType: "coca-cola", ccVersion: "v4" },
+  { number: 1024, name: "Federico Valverde",  country: "Uruguay",      countryCode: "CC", pageNumber: 0, positionInPage: 6,  sectionType: "coca-cola", ccVersion: "v4" },
+  { number: 1025, name: "Jefferson Lerma",    country: "Colombia",     countryCode: "CC", pageNumber: 0, positionInPage: 7,  sectionType: "coca-cola", ccVersion: "v4" },
+  { number: 1026, name: "Enner Valencia",     country: "Ecuador",      countryCode: "CC", pageNumber: 0, positionInPage: 8,  sectionType: "coca-cola", ccVersion: "v4" },
+  { number: 1027, name: "Jordan Ayew",        country: "Ghana",        countryCode: "CC", pageNumber: 0, positionInPage: 9,  sectionType: "coca-cola", ccVersion: "v4" },
+  { number: 1028, name: "Virgil van Dijk",    country: "Netherlands",  countryCode: "CC", pageNumber: 0, positionInPage: 10, sectionType: "coca-cola", ccVersion: "v4" },
+  { number: 1029, name: "Alphonso Davies",    country: "Canada",       countryCode: "CC", pageNumber: 0, positionInPage: 11, sectionType: "coca-cola", ccVersion: "v4" },
+  { number: 1030, name: "Weston McKennie",    country: "United States",countryCode: "CC", pageNumber: 0, positionInPage: 12, sectionType: "coca-cola", ccVersion: "v4" },
+  { number: 1031, name: "Eduardo Camavinga",  country: "France",       countryCode: "CC", pageNumber: 0, positionInPage: 13, sectionType: "coca-cola", ccVersion: "v4" },
+  { number: 1032, name: "Lautaro Martínez",   country: "Argentina",    countryCode: "CC", pageNumber: 0, positionInPage: 14, sectionType: "coca-cola", ccVersion: "v4" },
 ];
 
 // Compute position of each sticker within its countryCode group (1-based)
@@ -994,9 +1055,15 @@ export const STICKER_SECTION_INDEX: Record<number, number> = (() => {
   return map;
 })();
 
-// Returns the display code shown on the card: "00", "ALG-1", "FWC-3", etc.
+// For CC stickers each version resets position to 1, so we use positionInPage stored on the sticker
+export const CC_POSITION_MAP: Record<number, number> = Object.fromEntries(
+  STICKERS.filter(s => s.countryCode === 'CC').map(s => [s.number, s.positionInPage])
+);
+
+// Returns the display code shown on the card: "00", "CC-1", "ALG-1", "FWC-3", etc.
 export function getStickerDisplayCode(countryCode: string, globalNumber: number): string {
   if (countryCode === 'WP') return '00';
+  if (countryCode === 'CC') return `CC-${CC_POSITION_MAP[globalNumber] ?? 1}`;
   const idx = STICKER_SECTION_INDEX[globalNumber];
   return `${countryCode}-${idx}`;
 }

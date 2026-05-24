@@ -1271,6 +1271,113 @@ h1, h2, h3, h4, h5, h6 { margin: 0; }
   color: var(--ink);
 }
 
+/* ---------- Album version picker ---------- */
+.version-picker {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.version-picker__card {
+  width: 100%;
+  max-width: 580px;
+  padding: 40px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+}
+
+.version-picker__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+
+.version-picker__title {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin: 0 0 12px;
+}
+
+.version-picker__sub {
+  font-size: 13px;
+  color: var(--ink-2);
+  margin: 0 0 28px;
+  line-height: 1.6;
+}
+
+.version-picker__options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.version-option {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 14px 16px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  width: 100%;
+}
+
+.version-option:hover { border-color: var(--muted); }
+
+.version-option.is-selected {
+  border-color: var(--accent);
+  background: rgba(200, 255, 61, 0.05);
+}
+
+.version-option__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.version-option__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.version-option__check {
+  font-size: 13px;
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.version-option__check.is-visible { opacity: 1; }
+
+.version-option__count {
+  font-size: 12px;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+.version-option__regions {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
 /* Loading state */
 .loading-state {
   padding: 60px 20px;
