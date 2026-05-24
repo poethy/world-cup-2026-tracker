@@ -1,12 +1,20 @@
 import React, { useEffect } from 'react';
 import { COUNTRY_BY_CODE, SECTION_LABELS, getStickerType } from '../data/album-structure';
-import type { Sticker } from '../data/album-structure';
-import { getStickerDisplayCode } from '../data/stickers';
-import PLAYER_IMAGES from '../data/player-images.json';
 import FlagBlock from './FlagBlock';
 
+interface ModalSticker {
+  number: number;
+  name: string;
+  country: string;
+  countryCode: string;
+  pageNumber: number;
+  sectionType: string;
+  imageUrl?: string;
+  displayCode: string;
+}
+
 interface StickerDetailModalProps {
-  sticker: Omit<Sticker, 'id' | 'imageUrl' | 'createdAt'>;
+  sticker: ModalSticker;
   owned: boolean;
   onClose: () => void;
   onToggle: (number: number, owned: boolean) => void;
@@ -30,8 +38,8 @@ export default function StickerDetailModal({ sticker, owned, onClose, onToggle }
     : null;
 
   const stickerType = getStickerType(sticker.name, sticker.countryCode, sticker.number);
-  const displayCode = getStickerDisplayCode(sticker.countryCode, sticker.number);
-  const photoUrl: string | null = (PLAYER_IMAGES as Record<string, string | null>)[sticker.number] ?? null;
+  const { displayCode } = sticker;
+  const photoUrl: string | null = sticker.imageUrl ?? null;
 
   const typeLabel =
       stickerType === 'cover'   ? 'Cover Edition'

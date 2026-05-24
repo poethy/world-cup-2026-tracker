@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { STICKERS } from '../../data/stickers';
+import { supabase } from '../../utils/supabase';
 
 export const GET: APIRoute = async ({ request }) => {
   const url = new URL(request.url);
@@ -13,18 +13,23 @@ export const GET: APIRoute = async ({ request }) => {
   const limit  = Math.min(Number(limitParam)  || 100, 500);
   const offset = Number(offsetParam) || 0;
 
-  let filtered = STICKERS as typeof STICKERS;
+  let query = supabase.from('stickers').select('*', { count: 'exact' });
 
-  if (page)        filtered = filtered.filter(s => s.pageNumber  === Number(page));
-  if (countryCode) filtered = filtered.filter(s => s.countryCode === countryCode.toUpperCase());
-  if (section)     filtered = filtered.filter(s => s.sectionType === section);
-  if (country) {
-    const q = country.toLowerCase();
-    filtered = filtered.filter(s => s.country.toLowerCase().includes(q));
+  if (page)        query = query.eq('page_number', Number(page));
+  if (countryCode) query = query.eq('country_code', countryCode.toUpperCase());
+  if (section)     query = query.eq('section_type', section);
+  if (country)     query = query.ilike('country', `%${country}%`);
+
+  const { data, count, error } = await query
+    .order('number', { ascending: true })
+    .range(offset, offset + limit - 1);
+
+  if (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
-
-  const count = filtered.length;
-  const data  = filtered.slice(offset, offset + limit);
 
   return new Response(JSON.stringify({ data, count, limit, offset }), {
     status: 200,

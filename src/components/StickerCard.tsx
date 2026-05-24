@@ -1,8 +1,6 @@
 import React from 'react';
 import { COUNTRY_BY_CODE, SECTION_LABELS } from '../data/album-structure';
 import type { Country } from '../data/album-structure';
-import { getStickerDisplayCode } from '../data/stickers';
-import PLAYER_IMAGES from '../data/player-images.json';
 import FlagBlock from './FlagBlock';
 
 interface StickerCardProps {
@@ -12,6 +10,8 @@ interface StickerCardProps {
   countryCode: string;
   sectionType: string;
   owned: boolean;
+  displayCode: string;
+  photoUrl?: string | null;
   onToggle: (number: number, owned: boolean) => void;
   onOpenDetail: (number: number) => void;
 }
@@ -23,13 +23,13 @@ export default function StickerCard({
   countryCode,
   sectionType,
   owned,
+  displayCode,
+  photoUrl,
   onToggle,
   onOpenDetail,
 }: StickerCardProps) {
   const isSpecial = sectionType === 'special';
   const countryData: Country | undefined = COUNTRY_BY_CODE[countryCode];
-  const displayCode = getStickerDisplayCode(countryCode, number);
-  const photoUrl: string | null = (PLAYER_IMAGES as Record<string, string | null>)[number] ?? null;
 
   const cls = [
     'sticker',

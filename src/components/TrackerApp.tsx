@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { supabase } from '../utils/supabase';
-import { STICKERS } from '../data/stickers';
 import {
   COUNTRIES,
   COUNTRY_BY_CODE,
@@ -16,16 +15,25 @@ import type { AlbumVersion } from './AlbumVersionPicker';
 
 type OwnedMap = Record<number, boolean>;
 
-// Build a quick section-key lookup for each sticker
-const STICKER_SECTIONS: Record<number, string> = {};
-for (const s of STICKERS) {
-  STICKER_SECTIONS[s.number] = getStickerSectionKey(s.countryCode, s.number);
+interface LoadedSticker {
+  number: number;
+  name: string;
+  country: string;
+  countryCode: string;
+  pageNumber: number;
+  positionInPage: number;
+  sectionType: string;
+  imageUrl?: string;
+  ccVersion?: string;
+  displayCode: string;
 }
 
 // CC sticker counts per version
 const CC_COUNTS: Record<string, number> = { v1: 12, v2: 14, v3: 12, v4: 14 };
 
 export default function TrackerApp() {
+  const [stickers, setStickers] = useState<LoadedSticker[]>([]);
+  const [loadingStickers, setLoadingStickers] = useState(true);
   const [owned, setOwned] = useState<OwnedMap>({});
   const [loadingCollection, setLoadingCollection] = useState(true);
   const [albumVersion, setAlbumVersion] = useState<AlbumVersion | null>(null);
@@ -48,6 +56,38 @@ export default function TrackerApp() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  // Load sticker catalog from DB
+  useEffect(() => {
+    async function loadStickers() {
+      const { data } = await supabase.from('stickers').select('*').order('number', { ascending: true });
+      const counters: Record<string, number> = {};
+      const loaded = (data ?? []).map((row: any) => {
+        const countryCode: string = row.country_code;
+        counters[countryCode] = (counters[countryCode] || 0) + 1;
+        const idx = counters[countryCode];
+        let displayCode: string;
+        if (countryCode === 'WP') displayCode = '00';
+        else if (countryCode === 'CC') displayCode = `CC-${row.position_in_page}`;
+        else displayCode = `${countryCode}-${idx}`;
+        return {
+          number: row.number,
+          name: row.name,
+          country: row.country,
+          countryCode,
+          pageNumber: row.page_number,
+          positionInPage: row.position_in_page,
+          sectionType: row.section_type,
+          imageUrl: row.image_url ?? undefined,
+          ccVersion: row.cc_version ?? undefined,
+          displayCode,
+        } as LoadedSticker;
+      });
+      setStickers(loaded);
+      setLoadingStickers(false);
+    }
+    loadStickers();
   }, []);
 
   // Load user collection — direct Supabase call (browser-side, no server proxy)
@@ -130,13 +170,20 @@ export default function TrackerApp() {
     }
   }, [toggling]);
 
+  // Section key lookup, derived from loaded stickers
+  const STICKER_SECTIONS = useMemo(() => {
+    const map: Record<number, string> = {};
+    for (const s of stickers) map[s.number] = getStickerSectionKey(s.countryCode, s.number);
+    return map;
+  }, [stickers]);
+
   // ----- Stats -----
   const stats = useMemo(() => {
     const total = 980 + (albumVersion ? (CC_COUNTS[albumVersion] ?? 0) : 0);
     let ownedCount = 0, ownedSpecial = 0, totalSpecial = 0;
     const byCountry: Record<string, { total: number; owned: number }> = {};
 
-    for (const s of STICKERS) {
+    for (const s of stickers) {
       // Skip CC stickers that don't belong to this version
       if (s.ccVersion && s.ccVersion !== albumVersion) continue;
       const isSpecial = s.sectionType === 'special';
@@ -165,12 +212,12 @@ export default function TrackerApp() {
       pct: Math.round((ownedCount / total) * 100),
       topMissing,
     };
-  }, [owned, albumVersion]);
+  }, [stickers, owned, albumVersion]);
 
   // ----- Filtered & Grouped -----
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return STICKERS.filter(s => {
+    return stickers.filter(s => {
       // Only show CC stickers matching the user's album version
       if (s.ccVersion) {
         if (!albumVersion || s.ccVersion !== albumVersion) return false;
@@ -188,16 +235,16 @@ export default function TrackerApp() {
       }
       return true;
     });
-  }, [owned, filter, countryFilter, query, albumVersion]);
+  }, [stickers, owned, filter, countryFilter, query, albumVersion]);
 
   const grouped = useMemo(() => {
-    const map = new Map<string, typeof STICKERS>();
+    const map = new Map<string, LoadedSticker[]>();
     for (const s of filtered) {
       const key = STICKER_SECTIONS[s.number];
       if (!map.has(key)) map.set(key, []);
       map.get(key)!.push(s);
     }
-    const ordered: Array<[string, typeof STICKERS]> = [];
+    const ordered: Array<[string, LoadedSticker[]]> = [];
     for (const key of SECTION_ORDER) {
       if (map.has(key)) ordered.push([key, map.get(key)!]);
     }
@@ -223,10 +270,10 @@ export default function TrackerApp() {
   const handleReset = () => { setQuery(''); setFilter('all'); setCountryFilter('all'); };
 
   const detailSticker = detailNumber != null
-    ? STICKERS.find(s => s.number === detailNumber) ?? null
+    ? stickers.find(s => s.number === detailNumber) ?? null
     : null;
 
-  if (loadingCollection || loadingProfile) {
+  if (loadingCollection || loadingProfile || loadingStickers) {
     return (
       <div className="loading-state mono">
         Loading your collection…
@@ -339,7 +386,7 @@ export default function TrackerApp() {
                 aria-hidden={isDupe ? true : undefined}
               >
                 {SECTION_ORDER.map(key => {
-                  const items = STICKERS.filter(s => {
+                  const items = stickers.filter(s => {
                     if (STICKER_SECTIONS[s.number] !== key) return false;
                     if (s.ccVersion && s.ccVersion !== albumVersion) return false;
                     return true;
@@ -470,6 +517,8 @@ export default function TrackerApp() {
                     countryCode={s.countryCode}
                     sectionType={s.sectionType}
                     owned={!!owned[s.number]}
+                    displayCode={s.displayCode}
+                    photoUrl={s.imageUrl ?? null}
                     onToggle={handleToggle}
                     onOpenDetail={setDetailNumber}
                   />
